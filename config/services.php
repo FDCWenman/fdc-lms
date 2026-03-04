@@ -35,4 +35,31 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Slack API Configuration (FDCLeave)
+    |--------------------------------------------------------------------------
+    |
+    | Slack integration for FDCLeave system including user validation,
+    | password reset notifications, channel management, and display name updates.
+    |
+    */
+
+    'slack_api' => [
+        // Bot User OAuth Token (xoxb-...)
+        'bot_token' => env('SLACK_BOT_TOKEN'),
+        
+        // Incoming Webhook URL for channel posts
+        'webhook_url' => env('SLACK_WEBHOOK_URL'),
+        
+        // Leave Management Slack Channel ID
+        'leave_channel_id' => env('SLACK_LEAVE_CHANNEL_ID'),
+        
+        // Enable/disable Slack integration
+        'enabled' => env('SLACK_ENABLED', true),
+        
+        // API request timeout (seconds)
+        'timeout' => env('SLACK_API_TIMEOUT', 10),
+    ],
+
 ];
