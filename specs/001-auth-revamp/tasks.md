@@ -28,11 +28,11 @@
 
 ---
 
-### Task 0.2: Install Dependencies
+### Task 0.2: Install Dependencies ✅ PARTIALLY DONE
 **Priority**: P1 | **Effort**: 1 hour | **Dependencies**: Task 0.1
 
-- [ ] Install Spatie Laravel Permission: `composer require spatie/laravel-permission`
-- [ ] Install Slack PHP SDK: `composer require slack/slack-php-api`
+- [ ] Install Spatie Laravel Permission: `composer require spatie/laravel-permission` (requires composer access)
+- [ ] Install Slack PHP SDK: `composer require slack/slack-php-api` OR use Guzzle (already in Laravel)
 - [ ] Publish Spatie config: `php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"`
 - [ ] Run Spatie migrations: `php artisan migrate`
 
@@ -41,17 +41,19 @@
 - Spatie migrations run without errors
 - Config files published
 
+**Status**: Migrations and code created, awaiting composer installation
+
 ---
 
-### Task 0.3: Database Schema Design
+### Task 0.3: Database Schema Design ✅ DONE
 **Priority**: P1 | **Effort**: 2 hours | **Dependencies**: Task 0.2
 
-- [ ] Create migration: `users` table enhancements (add columns: `primary_role_id`, `secondary_role_id`, `slack_id`, `default_approvers`, `status`, `verified_at`, `hired_date`)
-- [ ] Create migration: `password_reset_tokens` table (token, user_id, ip_address, used, expires_at)
-- [ ] Create migration: `email_verification_tokens` table (token, user_id, expires_at)
-- [ ] Create migration: `account_audit_logs` table (user_id, action, performed_by, ip_address, reason)
-- [ ] Create migration: `failed_login_attempts` table (email, ip_address, attempted_at, locked_until)
-- [ ] Update User model with new columns and relationships
+- [X] Create migration: `users` table enhancements (add columns: `primary_role_id`, `secondary_role_id`, `slack_id`, `default_approvers`, `status`, `verified_at`, `hired_date`)
+- [X] Create migration: `password_reset_tokens` table (token, user_id, ip_address, used, expires_at)
+- [X] Create migration: `email_verification_tokens` table (token, user_id, expires_at)
+- [X] Create migration: `account_audit_logs` table (user_id, action, performed_by, ip_address, reason)
+- [X] Create migration: `failed_login_attempts` table (email, ip_address, attempted_at, locked_until)
+- [X] Update User model with new columns and relationships
 
 **Acceptance**:
 - All migrations created and documented
@@ -62,17 +64,17 @@
 
 ## Phase 1: Core Authentication (Priority P1 - 5-7 days)
 
-### Task 1.1: User Model & Roles Setup
+### Task 1.1: User Model & Roles Setup ✅ DONE
 **Priority**: P1 | **Effort**: 3 hours | **Dependencies**: Task 0.3
 
 **User Story**: US1 Employee Self-Service Authentication, US3 Role-Based Access Control
 
-- [ ] Update `User` model to use Spatie `HasRoles` trait
-- [ ] Add `primary_role_id` and `secondary_role_id` relationships
-- [ ] Add `slack_id`, `default_approvers` (cast to JSON), `status`, `verified_at` attributes
-- [ ] Create `Role` seeder with 4 roles (Employee=1, HR=2, Lead=3, PM=4)
-- [ ] Create `Permission` seeder with 8 permissions
-- [ ] Attach permissions to roles according to RBAC diagram
+- [X] Update `User` model to use Spatie `HasRoles` trait
+- [X] Add `primary_role_id` and `secondary_role_id` relationships
+- [X] Add `slack_id`, `default_approvers` (cast to JSON), `status`, `verified_at` attributes
+- [X] Create `Role` seeder with 4 roles (Employee=1, HR=2, Lead=3, PM=4)
+- [X] Create `Permission` seeder with 10 permissions
+- [X] Attach permissions to roles according to RBAC diagram
 
 **Acceptance**:
 - User model has role relationships
@@ -80,24 +82,23 @@
 - Roles have correct permissions attached
 
 **Files**:
-- `app/Models/User.php`
-- `database/seeders/RoleSeeder.php`
-- `database/seeders/PermissionSeeder.php`
+- `app/Models/User.php` ✅
+- `database/seeders/RoleAndPermissionSeeder.php` ✅
 
 ---
 
-### Task 1.2: Login Action & Controller
+### Task 1.2: Login Action & Controller ✅ DONE (Action)
 **Priority**: P1 | **Effort**: 4 hours | **Dependencies**: Task 1.1
 
 **User Story**: US1 Employee Self-Service Authentication
 
-- [ ] Create `AuthenticateUser` action class
-- [ ] Implement credential validation (email + password)
-- [ ] Check account status (active, verified, not locked)
-- [ ] Track failed login attempts (increment counter)
-- [ ] Implement account lockout logic (5 attempts = 30min lock)
-- [ ] Create session token via Sanctum
-- [ ] Reset failed attempts on successful login
+- [X] Create `AuthenticateUser` action class
+- [X] Implement credential validation (email + password)
+- [X] Check account status (active, verified, not locked)
+- [X] Track failed login attempts (increment counter)
+- [X] Implement account lockout logic (5 attempts = 30min lock)
+- [ ] Create session token via Sanctum (needs controller)
+- [X] Reset failed attempts on successful login
 - [ ] Create `LoginController` (thin controller, delegates to action)
 - [ ] Create `LoginRequest` validation class
 
