@@ -20,6 +20,12 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+            \App\Http\Middleware\CheckAccountStatus::class,
+        ]);
+
+        $middleware->alias([
+            'check.account.status' => \App\Http\Middleware\CheckAccountStatus::class,
+            'redirect.by.role' => \App\Http\Middleware\RedirectByRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

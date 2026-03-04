@@ -24,6 +24,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configurePolicies();
+    }
+
+    /**
+     * Configure authorization policies.
+     */
+    protected function configurePolicies(): void
+    {
+        \Illuminate\Support\Facades\Gate::policy(
+            \App\Models\User::class,
+            \App\Policies\UserPolicy::class
+        );
     }
 
     /**
