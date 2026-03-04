@@ -45,7 +45,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
     // Home redirect based on role
-    Route::get('/', RedirectByRole::class)->name('home');
+    Route::get('/', function () {
+        $user = auth()->user();
+        
+        // Check if user is an approver (HR, Lead, or PM)
+        if ($user->hasAnyRole(['HR Approver', 'Lead Approver', 'PM Approver'])) {
+            return redirect('/portal');
+        }
+        
+        // Default to employee dashboard
+        return redirect('/leaves');
+    })->name('home');
 
     // Email Verification Resend
     Route::post('/verification/resend', [VerificationController::class, 'resend'])

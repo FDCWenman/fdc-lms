@@ -40,32 +40,29 @@ class RoleAndPermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $name => $description) {
-            Permission::create([
-                'name' => $name,
-                'guard_name' => 'web',
-            ]);
+            Permission::firstOrCreate(
+                ['name' => $name, 'guard_name' => 'web']
+            );
         }
 
         // Create roles with IDs as per spec
         // Role ID 1: Employee
-        $employee = Role::create([
-            'id' => 1,
-            'name' => 'Employee',
-            'guard_name' => 'web',
-        ]);
-        $employee->givePermissionTo([
+        $employee = Role::firstOrCreate(
+            ['name' => 'Employee', 'guard_name' => 'web'],
+            ['id' => 1]
+        );
+        $employee->syncPermissions([
             'view_own_leaves',
             'create_leave_request',
             'cancel_own_leave',
         ]);
 
         // Role ID 2: HR Approver
-        $hrApprover = Role::create([
-            'id' => 2,
-            'name' => 'HR Approver',
-            'guard_name' => 'web',
-        ]);
-        $hrApprover->givePermissionTo([
+        $hrApprover = Role::firstOrCreate(
+            ['name' => 'HR Approver', 'guard_name' => 'web'],
+            ['id' => 2]
+        );
+        $hrApprover->syncPermissions([
             'view_own_leaves',
             'create_leave_request',
             'cancel_own_leave',
@@ -79,12 +76,11 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // Role ID 3: Lead Approver (Team Lead)
-        $leadApprover = Role::create([
-            'id' => 3,
-            'name' => 'Lead Approver',
-            'guard_name' => 'web',
-        ]);
-        $leadApprover->givePermissionTo([
+        $leadApprover = Role::firstOrCreate(
+            ['name' => 'Lead Approver', 'guard_name' => 'web'],
+            ['id' => 3]
+        );
+        $leadApprover->syncPermissions([
             'view_own_leaves',
             'create_leave_request',
             'cancel_own_leave',
@@ -94,12 +90,11 @@ class RoleAndPermissionSeeder extends Seeder
         ]);
 
         // Role ID 4: PM Approver (Project Manager)
-        $pmApprover = Role::create([
-            'id' => 4,
-            'name' => 'PM Approver',
-            'guard_name' => 'web',
-        ]);
-        $pmApprover->givePermissionTo([
+        $pmApprover = Role::firstOrCreate(
+            ['name' => 'PM Approver', 'guard_name' => 'web'],
+            ['id' => 4]
+        );
+        $pmApprover->syncPermissions([
             'view_own_leaves',
             'create_leave_request',
             'cancel_own_leave',
