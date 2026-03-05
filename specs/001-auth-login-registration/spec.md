@@ -7,6 +7,19 @@
 
 ---
 
+## Clarifications
+
+### Session 2026-03-05
+
+- Q: When a user's account is deactivated while they are actively logged in, how should the system handle their session? → A: Session invalidated at next request - user logged out automatically when they perform any action
+- Q: If the Slack API is unavailable during user registration, should the system allow the registration to proceed or require Slack validation to complete? → A: Block registration and require Slack API validation in production/staging environments, but bypass Slack validation when APP_ENV is "local" for development convenience
+- Q: How should expired verification tokens be cleaned up from the database? → A: Scheduled daily cleanup task removes tokens older than 30 days
+- Q: Is verification done via email or Slack? → A: Verification is done exclusively through Slack (not email). The company only uses Slack verification for account activation
+- Q: Should the system allow multiple concurrent sessions for the same user account? → A: Allow multiple concurrent sessions - user can be logged in from multiple devices/browsers
+- Q: What should happen when an admin tries to register a user with a Slack ID that's already assigned to another existing user? → A: Block registration and show error indicating Slack ID already exists in system
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Employee Login (Priority: P1)
@@ -45,19 +58,19 @@ An HR administrator needs to create new employee accounts in the system. They mu
 
 ---
 
-### User Story 3 - Email Verification (Priority: P2)
+### User Story 3 - Slack Verification (Priority: P2)
 
-A newly registered employee receives a verification email with a unique link. They must be able to click the link to activate their account and gain login access.
+A newly registered employee receives a verification message via Slack DM with a unique link. They must be able to click the link to activate their account and gain login access.
 
-**Why this priority**: Email verification ensures account ownership and prevents unauthorized access. It's a security requirement that must be in place before users can access the system.
+**Why this priority**: Slack verification ensures account ownership and validates that the user has access to their Slack account. It's a security requirement that must be in place before users can access the system.
 
-**Independent Test**: Can be tested by registering a user, checking for the verification email, clicking the link, and attempting to log in with the newly verified account. This delivers account activation capability.
+**Independent Test**: Can be tested by registering a user, checking for the verification Slack DM, clicking the link, and attempting to log in with the newly verified account. This delivers account activation capability.
 
 **Acceptance Scenarios**:
 
-1. **Given** a newly registered user with "for_verification" status, **When** they click the verification link in their email, **Then** their account status changes to "active", `verified_at` timestamp is set, and they see a success message
+1. **Given** a newly registered user with "for_verification" status, **When** they click the verification link in their Slack DM, **Then** their account status changes to "active", `verified_at` timestamp is set, and they see a success message
 2. **Given** an already verified account, **When** the verification link is clicked again, **Then** they see a message indicating the account is already verified
-3. **Given** an expired or invalid verification token, **When** clicked, **Then** they see an error message and are prompted to request a new verification link
+3. **Given** an expired or invalid verification token, **When** clicked, **Then** they see an error message and are prompted to request a new verification link via Slack
 4. **Given** a verified and active account, **When** they attempt to log in, **Then** they can successfully access the system
 
 ---
@@ -98,13 +111,13 @@ Users need the ability to securely log out of the system to protect their accoun
 
 ### Edge Cases
 
-- What happens when a user's account is deactivated while they are logged in? (Session should be invalidated)
-- How does the system handle concurrent login attempts from the same account?
-- What happens if the Slack API is unavailable during registration? (Registration should fail gracefully with appropriate error message)
+- When a user's account is deactivated while they are logged in, their session is invalidated at the next request and they are automatically logged out
+- The system allows multiple concurrent sessions for the same user account across different devices and browsers
+- If the Slack API is unavailable during registration in production/staging, registration fails with an error message requiring retry; in local development environment (APP_ENV=local), Slack validation is bypassed
 - How does the system handle password reset for unverified accounts?
 - What happens when a verification link is clicked after the account has been deactivated?
-- How are expired verification tokens cleaned up from the database?
-- What happens when an admin tries to register a user with a Slack ID that's already assigned to another user?
+- Expired verification tokens are automatically cleaned up by a scheduled daily task that removes tokens older than 30 days
+- When an admin tries to register a user with a Slack ID already assigned to another user, registration is blocked and an error message indicates the Slack ID is already in use
 
 ---
 
@@ -123,28 +136,32 @@ Users need the ability to securely log out of the system to protect their accoun
 - **FR-007**: System MUST prevent access to protected routes for unauthenticated users
 - **FR-008**: System MUST provide a logout mechanism that terminates the user session
 - **FR-009**: System MUST prevent access to previously viewed pages after logout via browser back button
+- **FR-034**: System MUST invalidate user sessions at the next request when an account is deactivated, automatically logging out the user
 
 #### User Registration (Admin-Only)
 
 - **FR-010**: System MUST restrict user registration to HR administrators (Role ID: 2) only
-- **FR-011**: System MUST validate Slack ID against Slack API during registration in real-time
+- **FR-011**: System MUST validate Slack ID against Slack API during registration in real-time in production and staging environments; Slack validation MUST be bypassed when APP_ENV is set to "local"
 - **FR-012**: System MUST collect the following required fields during registration: full name, email, password, Slack ID, primary role, default approvers (HR, TL, PM)
 - **FR-013**: System MUST enforce unique email addresses across all user accounts
+- **FR-038**: System MUST enforce unique Slack IDs across all user accounts and block registration if Slack ID already exists
 - **FR-014**: System MUST create new user accounts with status "for_verification" (2) by default
 - **FR-015**: System MUST support assignment of both primary role and optional secondary role during registration
 - **FR-016**: System MUST store default approvers as a JSON structure containing HR approver, TL approver, and PM approver user IDs
-- **FR-017**: System MUST automatically add newly registered users to the Slack leave management channel via Slack API
-- **FR-018**: System MUST send a verification email with a unique token immediately after successful registration
+- **FR-017**: System MUST automatically add newly registered users to the Slack leave management channel via Slack API in production and staging; MUST skip Slack channel invitation when APP_ENV is "local"
+- **FR-018**: System MUST send a verification Slack DM with a unique token link immediately after successful registration
+- **FR-035**: System MUST block registration and display an error message when Slack API is unavailable in production or staging environments
 
-#### Email Verification
+#### Slack Verification
 
 - **FR-019**: System MUST generate a unique verification token for each new user registration
-- **FR-020**: System MUST send verification email containing a clickable link with the verification token
+- **FR-020**: System MUST send verification Slack DM containing a clickable link with the verification token to the user's Slack account
 - **FR-021**: System MUST update account status from "for_verification" (2) to "active" (1) when verification link is clicked
 - **FR-022**: System MUST set the `verified_at` timestamp when account is verified
 - **FR-023**: System MUST display appropriate messages for already-verified accounts when verification link is clicked
 - **FR-024**: System MUST handle expired or invalid verification tokens gracefully with clear error messages
-- **FR-025**: System MUST allow users to request a new verification email if their token has expired
+- **FR-025**: System MUST allow users to request a new verification Slack DM if their token has expired
+- **FR-036**: System MUST run a scheduled daily cleanup task to remove verification tokens older than 30 days from the database
 
 #### Role Management
 
@@ -159,6 +176,7 @@ Users need the ability to securely log out of the system to protect their accoun
 - **FR-031**: System MUST provide clear, user-friendly error messages for all validation failures
 - **FR-032**: System MUST display loading indicators during Slack API validation calls
 - **FR-033**: System MUST redirect already-authenticated users away from login/registration pages to their appropriate dashboard
+- **FR-037**: System MUST allow multiple concurrent sessions for the same user account across different devices and browsers
 
 ### Key Entities
 
@@ -170,9 +188,9 @@ Users need the ability to securely log out of the system to protect their accoun
   - Types: Employee (1), HR Approver (2), TL Approver (3), PM Approver (4)
   - Each role determines dashboard redirection and feature access
 
-- **Verification Token**: Temporary token for email verification
+- **Verification Token**: Temporary token for Slack-based account verification
   - Attributes: token hash, associated user, creation timestamp, verification timestamp
-  - Single-use tokens that expire after a defined period
+  - Single-use tokens that expire after 24 hours; automatically cleaned up after 30 days
 
 ---
 
@@ -181,30 +199,29 @@ Users need the ability to securely log out of the system to protect their accoun
 ### Measurable Outcomes
 
 - **SC-001**: Users can complete login process in under 10 seconds with valid credentials
-- **SC-002**: Email verification flow completes successfully for 100% of valid verification links
+- **SC-002**: Slack verification flow completes successfully for 100% of valid verification links
 - **SC-003**: 100% of users are redirected to the correct dashboard based on their role after login
 - **SC-004**: System prevents 100% of login attempts from unverified or inactive accounts
 - **SC-005**: Registration form validates Slack IDs in under 3 seconds via real-time API checks
 - **SC-006**: Zero successful logins occur after a user logs out, even when using browser back button
 - **SC-007**: System handles authentication for at least 100 concurrent users without performance degradation
 - **SC-008**: All password storage uses bcrypt hashing with zero plain-text passwords in database
-- **SC-009**: 95% of users successfully verify their email within 24 hours of registration
+- **SC-009**: 95% of users successfully verify their account via Slack within 24 hours of registration
 - **SC-010**: Registration failure rate due to invalid Slack IDs is under 5%
 
 ---
 
 ## Assumptions
 
-1. **Slack Integration**: Slack Bot OAuth token and Incoming Webhook URL are already configured in the Laravel application environment
-2. **Email Service**: Email sending capability is configured (SMTP or mail service) for verification emails
-3. **Existing Database**: User and role tables exist in the database with the schema matching the legacy system structure
+1. **Slack Integration**: Slack Bot OAuth token and Incoming Webhook URL are already configured in the Laravel application environment for both verification DMs and channel notifications
+2. **Existing Database**: User and role tables exist in the database with the schema matching the legacy system structure
 4. **Laravel Fortify**: Laravel Fortify is installed and configured as the authentication foundation
 5. **Logo Format**: The FDCLeave logo at `public/images/fdc.png` can be displayed directly or converted to SVG format for better scalability
 6. **Admin Seeding**: At least one HR administrator account exists in the system for initial user registration
-7. **Slack Channel**: The Slack leave management channel exists and the bot has permissions to add users
-8. **Verification Email Templates**: Standard email templates will be used with minimal customization
-9. **Session Management**: Laravel's default session handling is sufficient for authentication state management
-10. **Token Expiration**: Email verification tokens expire after 24 hours (standard practice)
+7. **Slack Channel**: The Slack leave management channel exists and the bot has permissions to add users and send DMs
+8. **Session Management**: Laravel's default session handling is sufficient for authentication state management
+9. **Token Expiration**: Verification tokens expire after 24 hours and are cleaned up after 30 days
+10. **Task Scheduling**: Laravel's task scheduler is configured to run daily cleanup tasks
 
 ---
 
@@ -228,11 +245,11 @@ The following features from the complete authentication system are explicitly ex
 ## Dependencies
 
 1. **Laravel Fortify**: Required for authentication scaffolding and session management
-2. **Slack API**: Required for Slack ID validation and channel invitation during registration
-3. **Email Service**: Required for sending verification emails
-4. **Existing Database Schema**: User and role tables must exist with appropriate columns
-5. **Livewire 4**: Required for reactive UI components on authentication pages
-6. **Flux UI**: Component library for consistent UI design across authentication forms
+2. **Slack API**: Required for Slack ID validation, channel invitation, and sending verification DMs during registration
+3. **Existing Database Schema**: User and role tables must exist with appropriate columns
+4. **Livewire 4**: Required for reactive UI components on authentication pages
+5. **Flux UI**: Component library for consistent UI design across authentication forms
+6. **Laravel Task Scheduler**: Required for running daily verification token cleanup tasks
 
 ---
 
@@ -240,7 +257,8 @@ The following features from the complete authentication system are explicitly ex
 
 - This specification focuses on the core authentication foundation (login + registration) as the first step in migrating from CakePHP to Laravel + Livewire
 - The registration flow is admin-driven (HR only), not public self-registration
-- Email verification is a mandatory security step before account access
+- Slack verification (via DM) is the exclusive verification method - no email verification is used
 - Slack integration is critical to the registration process and must be validated before account creation
 - Role-based redirection ensures users land on the most relevant page for their workflow
 - The system maintains backward compatibility with the legacy role structure (4 roles + secondary role support)
+- Verification tokens expire after 24 hours and are automatically cleaned up after 30 days via scheduled task
