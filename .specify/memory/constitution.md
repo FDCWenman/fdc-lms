@@ -115,6 +115,20 @@ Critical notifications must be delivered reliably:
 
 ## Development Workflow
 
+### Environment & Execution Context (MANDATORY)
+Before executing any commands or making implementation decisions, agents MUST:
+- **Read `.env` file** to understand runtime environment and configuration
+- **Check for Docker/container setup**: Look for `LOCAL_DOCKER` and `LOCAL_PATH` environment variables
+- **Execute commands in correct context**:
+  - If `LOCAL_DOCKER` is set: Execute all commands inside the Docker container using `docker exec -it <container_id> <command>`
+  - If no Docker: Execute commands directly on the host
+- **Verify database connection**: Check `DB_CONNECTION`, `DB_HOST`, `DB_PORT` before running migrations
+- **Check queue driver**: Verify `QUEUE_CONNECTION` to understand async job behavior
+- **Review session configuration**: Check `SESSION_DRIVER` for multi-device support requirements
+- **Validate external service configs**: Confirm all required API keys and service credentials are documented
+
+**Critical**: Never assume local execution. Always check `.env` first to determine the correct execution environment.
+
 ### Code Standards
 - PSR-12 coding standards for PHP (enforced by Laravel Pint)
 - TypeScript strict mode enabled
@@ -153,14 +167,16 @@ This constitution supersedes all other development practices and guidelines.
 - Non-compliance must be justified and documented
 - Code reviews must check for: Test coverage, Permission checks, Audit trail completeness, Data consistency safeguards, Visual documentation presence
 - Specifications without required Mermaid diagrams must be rejected
+- Agents must verify environment configuration before executing commands
 
 ### Exceptions
 - Emergency hotfixes may bypass test-first requirement (with follow-up test addition within 24 hours)
 - Security patches may be expedited through review process
 - All exceptions must be documented in constitution-changelog.md
 
-**Version**: 1.1.0 | **Ratified**: 2026-03-04 | **Last Amended**: 2026-03-05
+**Version**: 1.2.0 | **Ratified**: 2026-03-04 | **Last Amended**: 2026-03-05
 
 ### Changelog
+- **v1.2.0 (2026-03-05)**: Added "Environment & Execution Context" requirement - mandatory .env file analysis and Docker-aware command execution
 - **v1.1.0 (2026-03-05)**: Added Section VI - Visual Documentation requirement for Mermaid diagrams in all specifications and plans
 - **v1.0.0 (2026-03-04)**: Initial constitution ratified
