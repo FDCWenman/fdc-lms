@@ -1,9 +1,9 @@
 # FDCLeave — Leave Management System: Feature Investigation
 
-> **Purpose**: Comprehensive feature audit for Laravel + Vue revamp planning  
+> **Purpose**: Comprehensive feature audit for Laravel + Livewire revamp planning  
 > **Investigated**: March 4, 2026  
 > **Current Stack**: CakePHP 2.x + MySQL  
-> **Target Stack**: Laravel + Vue
+> **Target Stack**: Laravel + Livewire
 
 ---
 
@@ -20,9 +20,8 @@
 9. [App Settings & Configuration](#9-app-settings--configuration)
 10. [Slack Integration](#10-slack-integration)
 11. [Cron Jobs / Scheduled Tasks](#11-cron-jobs--scheduled-tasks)
-12. [AJAX / API Endpoints](#12-ajax--api-endpoints)
-13. [Database Schema Summary](#13-database-schema-summary)
-14. [Revamp Notes for Laravel + Vue](#14-revamp-notes-for-laravel--vue)
+12. [Database Schema Summary](#12-database-schema-summary)
+13. [Revamp Notes for Laravel + Livewire](#13-revamp-notes-for-laravel--livewire)
 
 ---
 
@@ -301,27 +300,7 @@ All settings are stored in a single `leave_app_settings` table as JSON blobs, br
 
 ---
 
-## 12. AJAX / API Endpoints
-
-All endpoints require authentication (session-based).
-
-| Endpoint | Method | Purpose |
-|---|---|---|
-| `/leaves/validateInputs` | POST | Real-time form validation; returns JSON errors |
-| `/leaves/checkRequiredProof` | POST | Check if attachment is required for selected leave type/count |
-| `/leaves/disableCutoffDates` | POST | Return dates to disable in the date picker |
-| `/leaves/getRequestMoreDetails` | POST | Fetch leave detail for modal view |
-| `/administration/getRequestMoreDetails` | POST | Admin leave detail modal data |
-| `/portal/getLeaveSummary` | GET | Aggregated daily leave counts by type (for calendar) |
-| `/portal/getLeaveDetails` | GET | All leaves on a specific date (for day modal) |
-| `/portal/getLeaveListView` | GET | Flat list of leaves per day in a date range |
-| `/portal/getMonthViewLeaveSummary` | GET | Month-view aggregated counts |
-| `/users/refreshSlackName` | GET | Sync Slack display name to local DB + session |
-| `/users/updateHiredDate` | POST (JSON) | Update employee hire date |
-
----
-
-## 13. Database Schema Summary
+## 12. Database Schema Summary
 
 | Table | Purpose |
 |---|---|
@@ -339,12 +318,12 @@ All endpoints require authentication (session-based).
 
 ---
 
-## 14. Revamp Notes for Laravel + Vue
+## 13. Revamp Notes for Laravel + Livewire
 
 ### What to Rebuild (Feature Checklist)
 
 #### Authentication & Users
-- [ ] Email + password auth (Laravel Sanctum or Breeze)
+- [ ] Email + password auth (Laravel Fortify)
 - [ ] Email verification flow
 - [ ] Forgot password (consider: Slack DM vs email — currently Slack only)
 - [ ] Role-based access control (4 roles + secondary role support)
@@ -360,7 +339,7 @@ All endpoints require authentication (session-based).
 - [ ] Multi-file attachment upload
 - [ ] Proof requirement logic per leave type
 - [ ] Advance filing and cutoff period enforcement
-- [ ] Real-time form validation (Vue + API)
+- [ ] Real-time form validation (Livewire reactive properties)
 - [ ] Offline leave entry (HR bypass)
 
 #### Approval Workflow
@@ -377,7 +356,7 @@ All endpoints require authentication (session-based).
 - [ ] Credit consumption tracking
 
 #### Calendar Portal
-- [ ] FullCalendar integration (or equivalent in Vue, e.g. vue-cal)
+- [ ] FullCalendar integration with Livewire
 - [ ] Month/Week/Day/List views
 - [ ] Color-coded events per leave type
 - [ ] Day click → detail modal with DataTable
@@ -409,13 +388,13 @@ All endpoints require authentication (session-based).
 
 | Concern | Recommendation |
 |---|---|
-| API | Laravel (REST API, Sanctum auth) |
-| Frontend | Vue 3 + Composition API + Vite |
-| UI Library | Tailwind CSS or PrimeVue |
-| State Management | Pinia |
-| Calendar | FullCalendar Vue component or vue-cal |
+| Framework | Laravel 12 |
+| Frontend | Livewire 4 (no separate API needed) |
+| Navigation | wire:navigate for SPA-like navigation |
+| UI Library | Flux UI (Livewire component library) |
+| Calendar | FullCalendar with Alpine.js integration |
 | File Storage | Laravel Storage (local or S3) |
-| Auth | Laravel Sanctum (SPA mode) |
+| Auth | Laravel Fortify |
 | Scheduler | Laravel Task Scheduling (`php artisan schedule:run`) |
 | Queue | Laravel Queues for Slack notifications |
 | Roles/Permissions | Spatie Laravel Permission |
@@ -423,8 +402,8 @@ All endpoints require authentication (session-based).
 ### Key Complexity Areas to Design Carefully
 
 1. **Leave credit calculation** — involves hire date, fiscal year cutoff, carry-over logic, and proration for new hires
-2. **Date validation per leave type** — each of the 10 types has distinct rules; must be implemented server-side and reflected in Vue UI
-3. **Cutoff period logic** — date ranges that block certain leave types; needs to be queryable from the API for the date picker
+2. **Date validation per leave type** — each of the 10 types has distinct rules; must be implemented server-side and reflected in Livewire components
+3. **Cutoff period logic** — date ranges that block certain leave types; needs to be dynamically loaded in Livewire components for the date picker
 4. **Three-stage approval with role overlap** — secondary roles mean a user can occupy multiple positions in the approval chain
 5. **Slack display name cron** — timing-sensitive; must handle undertime (30-min window) and full-day leaves separately
 6. **Multi-day leave expansion** — calendar portal needs server-side date expansion to show multi-day leaves across each calendar day
