@@ -28,13 +28,14 @@ This feature follows an **incremental delivery approach** where each user story 
 **Goal**: Initialize project infrastructure and dependencies
 
 - [ ] T001 Install and configure Laravel Fortify in config/fortify.php
-- [ ] T002 [P] Configure Slack API credentials in config/services.php
-- [ ] T003 [P] Set up database session driver in config/session.php
-- [ ] T004 Create roles migration and seeder in database/migrations/ and database/seeders/RoleSeeder.php
-- [ ] T005 [P] Create verification_tokens table migration in database/migrations/
-- [ ] T006 [P] Add verification columns to users table migration in database/migrations/
-- [ ] T007 Run migrations to set up database schema
-- [ ] T008 Seed roles table with 4 roles (Employee, HR, TL, PM)
+- [ ] T002 [P] Install Spatie Laravel Permission package via composer
+- [ ] T003 [P] Publish Spatie migrations and run to create roles/permissions tables
+- [ ] T004 [P] Configure Slack API credentials in config/services.php
+- [ ] T005 [P] Set up database session driver in config/session.php
+- [ ] T006 [P] Create verification_tokens table migration in database/migrations/
+- [ ] T007 [P] Remove legacy role_id/secondary_role_id columns from users table (if exist)
+- [ ] T008 Run migrations to set up database schema
+- [ ] T009 Seed roles table with 4 roles using Spatie (employee, hr, team-lead, project-manager)
 
 ---
 
@@ -46,16 +47,15 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Models & Core Services
 
-- [ ] T009 [P] Create VerificationToken model in app/Models/VerificationToken.php
-- [ ] T010 [P] Update User model with verification relationships in app/Models/User.php
-- [ ] T011 [P] Create Role model in app/Models/Role.php
+- [ ] T010 [P] Create VerificationToken model in app/Models/VerificationToken.php
+- [ ] T011 [P] Update User model to use Spatie HasRoles trait in app/Models/User.php
 - [ ] T012 Create SlackService with environment-aware behavior in app/Services/SlackService.php
 - [ ] T013 Write unit tests for SlackService in tests/Unit/Services/SlackServiceTest.php
 
 ### Middleware & Authentication
 
 - [ ] T014 [P] Create EnsureUserIsActive middleware in app/Http/Middleware/EnsureUserIsActive.php
-- [ ] T015 [P] Create RoleMiddleware for role-based access in app/Http/Middleware/RoleMiddleware.php
+- [ ] T015 [P] Use Spatie's built-in role middleware (configured in bootstrap/app.php)
 - [ ] T016 [P] Create RedirectIfAuthenticated middleware in app/Http/Middleware/RedirectIfAuthenticated.php
 - [ ] T017 Configure Fortify authentication logic in app/Providers/FortifyServiceProvider.php
 - [ ] T018 Register middleware in bootstrap/app.php
@@ -84,7 +84,7 @@ This feature follows an **incremental delivery approach** where each user story 
 ### Authentication Logic
 
 - [ ] T022 [US1] Configure Fortify to check status=1 AND verified_at in app/Providers/FortifyServiceProvider.php
-- [ ] T023 [US1] Implement role-based redirect logic after authentication in app/Providers/FortifyServiceProvider.php
+- [ ] T023 [US1] Implement role-based redirect logic using Spatie's hasRole() in app/Providers/FortifyServiceProvider.php
 - [ ] T024 [US1] Add RedirectIfAuthenticated middleware to login route in routes/web.php
 
 ### Routes
@@ -94,7 +94,7 @@ This feature follows an **incremental delivery approach** where each user story 
 ### Tests
 
 - [ ] T026 [US1] Write feature test for successful employee login in tests/Feature/Auth/LoginTest.php
-- [ ] T027 [US1] Write feature test for successful approver login in tests/Feature/Auth/LoginTest.php
+- [ ] T027 [US1] Write feature test for successful approver login (hr/team-lead/project-manager) in tests/Feature/Auth/LoginTest.php
 - [ ] T028 [US1] Write feature test for unverified user login rejection in tests/Feature/Auth/LoginTest.php
 - [ ] T029 [US1] Write feature test for inactive user login rejection in tests/Feature/Auth/LoginTest.php
 - [ ] T030 [US1] Write feature test for invalid credentials in tests/Feature/Auth/LoginTest.php
@@ -118,7 +118,7 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Actions & Business Logic
 
-- [ ] T032 [US2] Create RegisterUserAction in app/Actions/Auth/RegisterUserAction.php
+- [ ] T032 [US2] Create RegisterUserAction with Spatie role assignment in app/Actions/Auth/RegisterUserAction.php
 - [ ] T033 [US2] Write unit tests for RegisterUserAction in tests/Unit/Actions/Auth/RegisterUserActionTest.php
 
 ### Form Requests
@@ -141,7 +141,7 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Routes
 
-- [ ] T043 [US2] Define registration routes with HR role middleware in routes/web.php
+- [ ] T043 [US2] Define registration routes with Spatie 'role:hr' middleware in routes/web.php
 
 ### Tests
 
@@ -206,27 +206,27 @@ This feature follows an **incremental delivery approach** where each user story 
 
 **Goal**: Users automatically redirect to appropriate dashboard based on role
 
-**Independent Test**: Log in with each role type (1-4) and verify correct redirection; test secondary role access
+**Independent Test**: Log in with each role type (employee, hr, team-lead, project-manager) and verify correct redirection; test multi-role access
 
 **Acceptance Criteria**:
-- ✅ Role ID 1 → /leaves
-- ✅ Role IDs 2,3,4 → /portal
-- ✅ Secondary roles grant access to both role routes
-- ✅ Middleware enforces role-based access
+- ✅ Employee role → /leaves
+- ✅ Approver roles (hr|team-lead|project-manager) → /portal
+- ✅ Multi-role users grant access to all role capabilities
+- ✅ Spatie role middleware enforces role-based access
 
 ### Tests
 
-- [ ] T065 [US4] Write feature test for employee role redirection in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T066 [US4] Write feature test for HR role redirection in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T067 [US4] Write feature test for TL role redirection in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T068 [US4] Write feature test for PM role redirection in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T069 [US4] Write feature test for secondary role access in tests/Feature/Auth/RoleRedirectionTest.php
+- [ ] T065 [US4] Write feature test for employee role redirection to /leaves in tests/Feature/Auth/RoleRedirectionTest.php
+- [ ] T066 [US4] Write feature test for hr role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
+- [ ] T067 [US4] Write feature test for team-lead role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
+- [ ] T068 [US4] Write feature test for project-manager role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
+- [ ] T069 [US4] Write feature test for multi-role user access in tests/Feature/Auth/RoleRedirectionTest.php
 - [ ] T070 [US4] Write feature test for unauthorized role access blocked in tests/Feature/Auth/RoleRedirectionTest.php
 
 ### Integration
 
-- [ ] T071 [US4] Apply role middleware to /leaves route in routes/web.php
-- [ ] T072 [US4] Apply role middleware to /portal route in routes/web.php
+- [ ] T071 [US4] Apply Spatie 'role:employee' middleware to /leaves route in routes/web.php
+- [ ] T072 [US4] Apply Spatie 'role:hr|team-lead|project-manager' middleware to /portal route in routes/web.php
 - [ ] T073 [US4] Create placeholder /leaves page for employees in resources/views/pages/leaves.blade.php
 - [ ] T074 [US4] Create placeholder /portal page for approvers in resources/views/pages/portal.blade.php
 
@@ -323,11 +323,13 @@ graph TD
 ## Parallel Execution Opportunities
 
 ### Phase 1 (Setup)
-- **Parallel Group A**: T002, T003, T005, T006 (different config/migration files)
+- **Parallel Group A**: T002 (Spatie), T004 (Slack config), T005 (Session config), T006 (Verification migration)
+- **Note**: T007 removes legacy role_id columns, T009 seeds Spatie roles
 
 ### Phase 2 (Foundational)
-- **Parallel Group A**: T009, T010, T011 (different model files)
-- **Parallel Group B**: T014, T015, T016 (different middleware files)
+- **Parallel Group A**: T010 (VerificationToken), T011 (User with HasRoles trait)
+- **Parallel Group B**: T014, T016 (different middleware files)
+- **Note**: T015 uses Spatie's built-in role middleware (no custom file)
 
 ### Phase 3 (User Story 1)
 - **Parallel Group A**: T019, T020 (component + view after prerequisites)

@@ -83,8 +83,7 @@ C4Container
 
 ```mermaid
 erDiagram
-    users_fdc_leaves ||--|| roles : "belongs_to (primary)"
-    users_fdc_leaves ||--o| roles : "belongs_to (secondary, optional)"
+    users_fdc_leaves }o--o{ roles : "model_has_roles (Spatie)"
     users_fdc_leaves ||--o{ verification_tokens : "has_many"
     users_fdc_leaves ||--o{ sessions : "has_many"
     users_fdc_leaves }o--o{ users_fdc_leaves : "approvers (JSON)"
@@ -95,8 +94,6 @@ erDiagram
         string email UK
         string password
         string slack_id UK
-        unsignedBigInt role_id FK
-        unsignedBigInt secondary_role_id FK "nullable"
         tinyint status "0,1,2"
         timestamp verified_at "nullable"
         json default_approvers "{hr_id, tl_id, pm_id}"
@@ -106,10 +103,16 @@ erDiagram
     
     roles {
         bigint id PK
-        string name "Employee, HR Approver, TL Approver, PM Approver"
-        string description
+        string name UK "employee, hr, team-lead, project-manager"
+        string guard_name "web"
         timestamps created_at
         timestamps updated_at
+    }
+    
+    model_has_roles {
+        bigint role_id FK
+        string model_type "App-Models-User"
+        bigint model_id FK
     }
     
     verification_tokens {
@@ -154,12 +157,12 @@ sequenceDiagram
             DB-->>Fortify: Session created
             Fortify-->>LoginPage: Authentication success
             LoginPage->>Auth: Redirect with session
-            Auth->>DB: Check role_id
-            DB-->>Auth: role_id
+            Auth->>DB: Check user roles (Spatie)
+            DB-->>Auth: roles collection
             
-            alt role_id = 1 (Employee)
+            alt has 'employee' role only
                 Auth-->>User: Redirect to /leaves
-            else role_id IN (2,3,4) (Approver)
+            else has approver role (hr|team-lead|project-manager)
                 Auth-->>User: Redirect to /portal
             end
         else Status!=1 OR verified_at IS NULL

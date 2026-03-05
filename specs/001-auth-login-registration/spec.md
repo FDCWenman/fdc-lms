@@ -140,8 +140,7 @@ flowchart TD
 
 ```mermaid
 erDiagram
-    USER ||--|| ROLE : "has primary"
-    USER ||--o| ROLE : "has secondary (optional)"
+    USER }o--o{ ROLE : "model_has_roles (Spatie)"
     USER ||--o{ VERIFICATION_TOKEN : "has"
     USER ||--o{ SESSION : "has multiple"
     USER }o--o{ USER : "default approvers"
@@ -152,8 +151,6 @@ erDiagram
         string email UK
         string password_hash
         string slack_id UK
-        int role_id FK
-        int secondary_role_id FK "nullable"
         int status "0=deactivated, 1=active, 2=for_verification"
         timestamp verified_at "nullable"
         json default_approvers "HR, TL, PM user IDs"
@@ -163,8 +160,10 @@ erDiagram
     
     ROLE {
         int id PK
-        string name
-        string description
+        string name UK
+        string guard_name
+        timestamp created_at
+        timestamp updated_at
     }
     
     VERIFICATION_TOKEN {
@@ -253,11 +252,11 @@ After successful login, users should be automatically redirected to the appropri
 
 **Acceptance Scenarios**:
 
-1. **Given** an employee (Role ID: 1), **When** they log in, **Then** they are redirected to `/leaves` (their leave requests page)
-2. **Given** an HR approver (Role ID: 2), **When** they log in, **Then** they are redirected to `/portal` (approval dashboard)
-3. **Given** a TL approver (Role ID: 3), **When** they log in, **Then** they are redirected to `/portal`
-4. **Given** a PM approver (Role ID: 4), **When** they log in, **Then** they are redirected to `/portal`
-5. **Given** a user with a secondary role, **When** they log in, **Then** they have access to both role capabilities and are redirected based on their primary role
+1. **Given** an employee with "employee" role, **When** they log in, **Then** they are redirected to `/leaves` (their leave requests page)
+2. **Given** an HR approver with "hr" role, **When** they log in, **Then** they are redirected to `/portal` (approval dashboard)
+3. **Given** a TL approver with "team-lead" role, **When** they log in, **Then** they are redirected to `/portal`
+4. **Given** a PM approver with "project-manager" role, **When** they log in, **Then** they are redirected to `/portal`
+5. **Given** a user with multiple roles, **When** they log in, **Then** they have access to all role capabilities and are redirected based on their primary role (employee vs approver)
 
 ---
 
@@ -298,8 +297,8 @@ Users need the ability to securely log out of the system to protect their accoun
 - **FR-001**: System MUST authenticate users using email and password combination
 - **FR-002**: System MUST hash all passwords using bcrypt algorithm before storage
 - **FR-003**: System MUST enforce that only accounts with status "active" (1) AND `verified_at` timestamp set can log in
-- **FR-004**: System MUST redirect employees (Role ID: 1) to `/leaves` after successful login
-- **FR-005**: System MUST redirect approvers (Role IDs: 2, 3, 4) to `/portal` after successful login
+- **FR-004**: System MUST redirect users with "employee" role to `/leaves` after successful login
+- **FR-005**: System MUST redirect users with approver roles ("hr", "team-lead", "project-manager") to `/portal` after successful login
 - **FR-006**: System MUST display generic error messages for failed login attempts without revealing whether email or password was incorrect
 - **FR-007**: System MUST prevent access to protected routes for unauthenticated users
 - **FR-008**: System MUST provide a logout mechanism that terminates the user session
@@ -308,13 +307,13 @@ Users need the ability to securely log out of the system to protect their accoun
 
 #### User Registration (Admin-Only)
 
-- **FR-010**: System MUST restrict user registration to HR administrators (Role ID: 2) only
+- **FR-010**: System MUST restrict user registration to users with "hr" role only
 - **FR-011**: System MUST validate Slack ID against Slack API during registration in real-time in production and staging environments; Slack validation MUST be bypassed when APP_ENV is set to "local"
-- **FR-012**: System MUST collect the following required fields during registration: full name, email, password, Slack ID, primary role, default approvers (HR, TL, PM)
+- **FR-012**: System MUST collect the following required fields during registration: full name, email, password, Slack ID, role(s), default approvers (HR, TL, PM)
 - **FR-013**: System MUST enforce unique email addresses across all user accounts
 - **FR-038**: System MUST enforce unique Slack IDs across all user accounts and block registration if Slack ID already exists
 - **FR-014**: System MUST create new user accounts with status "for_verification" (2) by default
-- **FR-015**: System MUST support assignment of both primary role and optional secondary role during registration
+- **FR-015**: System MUST support assignment of multiple roles during registration (e.g., user can have both "employee" and "team-lead" roles)
 - **FR-016**: System MUST store default approvers as a JSON structure containing HR approver, TL approver, and PM approver user IDs
 - **FR-017**: System MUST automatically add newly registered users to the Slack leave management channel via Slack API in production and staging; MUST skip Slack channel invitation when APP_ENV is "local"
 - **FR-018**: System MUST send a verification Slack DM with a unique token link immediately after successful registration
@@ -333,10 +332,10 @@ Users need the ability to securely log out of the system to protect their accoun
 
 #### Role Management
 
-- **FR-026**: System MUST support four role types: Employee (1), HR Approver (2), TL Approver (3), PM Approver (4)
-- **FR-027**: System MUST support secondary role assignment, allowing users to hold dual roles
+- **FR-026**: System MUST support four role types: Employee, HR, Team Lead, Project Manager
+- **FR-027**: System MUST support multiple role assignment, allowing users to hold multiple roles simultaneously
 - **FR-028**: System MUST enforce role-based access control for all protected routes
-- **FR-029**: System MUST grant access permissions based on both primary and secondary roles
+- **FR-029**: System MUST grant access permissions based on all assigned roles
 
 #### UI/UX Requirements
 
@@ -349,11 +348,12 @@ Users need the ability to securely log out of the system to protect their accoun
 ### Key Entities
 
 - **User**: Represents an employee or administrator in the system
-  - Attributes: name, email, password hash, Slack ID, primary role, secondary role (optional), account status (for_verification/active/deactivated), email verification status (`verified_at` timestamp), default approvers (JSON: HR, TL, PM user IDs)
+  - Attributes: name, email, password hash, Slack ID, account status (for_verification/active/deactivated), email verification status (`verified_at` timestamp), default approvers (JSON: HR, TL, PM user IDs)
   - Status values: 0 (deactivated), 1 (active), 2 (for_verification)
+  - Roles assigned via Spatie Laravel Permission (many-to-many relationship)
 
-- **Role**: Defines user permissions and access levels
-  - Types: Employee (1), HR Approver (2), TL Approver (3), PM Approver (4)
+- **Role**: Defines user permissions and access levels (managed by Spatie Laravel Permission)
+  - Types: employee, hr, team-lead, project-manager
   - Each role determines dashboard redirection and feature access
 
 - **Verification Token**: Temporary token for Slack-based account verification
@@ -413,8 +413,8 @@ The following features from the complete authentication system are explicitly ex
 ## Dependencies
 
 1. **Laravel Fortify**: Required for authentication scaffolding and session management
-2. **Slack API**: Required for Slack ID validation, channel invitation, and sending verification DMs during registration
-3. **Existing Database Schema**: User and role tables must exist with appropriate columns
+2. **Spatie Laravel Permission**: Required for role and permission management (replaces legacy role_id structure)
+3. **Slack API**: Required for Slack ID validation, channel invitation, and sending verification DMs during registration
 4. **Livewire 4**: Required for reactive UI components on authentication pages
 5. **Flux UI**: Component library for consistent UI design across authentication forms
 6. **Laravel Task Scheduler**: Required for running daily verification token cleanup tasks
@@ -428,5 +428,5 @@ The following features from the complete authentication system are explicitly ex
 - Slack verification (via DM) is the exclusive verification method - no email verification is used
 - Slack integration is critical to the registration process and must be validated before account creation
 - Role-based redirection ensures users land on the most relevant page for their workflow
-- The system maintains backward compatibility with the legacy role structure (4 roles + secondary role support)
+- The system uses Spatie Laravel Permission for modern role management (4 roles: employee, hr, team-lead, project-manager with multi-role support)
 - Verification tokens expire after 24 hours and are automatically cleaned up after 30 days via scheduled task
