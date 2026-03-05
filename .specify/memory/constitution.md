@@ -44,7 +44,16 @@ All business-critical features must be test-driven:
 - Unit tests required for all service classes and actions
 - Integration tests for external calendar/notification services
 
-### VI. Date & Time Handling Standards
+### VI. Visual Documentation (MANDATORY)
+All specifications and plans must include visual diagrams:
+- **Mermaid diagrams required** for all feature specifications and implementation plans
+- Flow diagrams must show: Authentication flows, Business process workflows, State transitions
+- Data model diagrams (ERD) must show: Entities, Relationships, Key attributes
+- Architecture diagrams must show: System components, External integrations, Data flow
+- Diagrams must be technology-agnostic in specifications, implementation-specific in plans
+- All diagrams must be kept up-to-date with implementation changes
+
+### VII. Date & Time Handling Standards
 Consistent handling of dates, time zones, and durations:
 - All dates stored in UTC in database
 - Display dates in user's timezone
@@ -53,7 +62,7 @@ Consistent handling of dates, time zones, and durations:
 - Half-day, hourly leave support must be explicit in data model
 - Date ranges must be validated (start ≤ end, no overlaps with approved leaves)
 
-### VII. Notification Reliability
+### VIII. Notification Reliability
 Critical notifications must be delivered reliably:
 - Leave request submitted → Notify approver(s)
 - Leave approved/rejected → Notify employee
@@ -142,11 +151,16 @@ This constitution supersedes all other development practices and guidelines.
 ### Enforcement
 - All pull requests must verify constitutional compliance
 - Non-compliance must be justified and documented
-- Code reviews must check for: Test coverage, Permission checks, Audit trail completeness, Data consistency safeguards
+- Code reviews must check for: Test coverage, Permission checks, Audit trail completeness, Data consistency safeguards, Visual documentation presence
+- Specifications without required Mermaid diagrams must be rejected
 
 ### Exceptions
 - Emergency hotfixes may bypass test-first requirement (with follow-up test addition within 24 hours)
 - Security patches may be expedited through review process
 - All exceptions must be documented in constitution-changelog.md
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-04 | **Last Amended**: 2026-03-04
+**Version**: 1.1.0 | **Ratified**: 2026-03-04 | **Last Amended**: 2026-03-05
+
+### Changelog
+- **v1.1.0 (2026-03-05)**: Added Section VI - Visual Documentation requirement for Mermaid diagrams in all specifications and plans
+- **v1.0.0 (2026-03-04)**: Initial constitution ratified

@@ -20,6 +20,174 @@
 
 ---
 
+## System Diagrams
+
+### Authentication Flow Diagram
+
+```mermaid
+flowchart TD
+    Start([User Access System]) --> CheckAuth{Already<br/>Authenticated?}
+    CheckAuth -->|Yes| CheckRole{Check Role}
+    CheckAuth -->|No| LoginPage[Show Login Page]
+    
+    LoginPage --> EnterCreds[Enter Email & Password]
+    EnterCreds --> ValidateCreds{Valid<br/>Credentials?}
+    
+    ValidateCreds -->|No| ShowError[Show Generic Error]
+    ShowError --> LoginPage
+    
+    ValidateCreds -->|Yes| CheckStatus{Account<br/>Active &<br/>Verified?}
+    
+    CheckStatus -->|No - Unverified| ErrorUnverified[Show: Account Not Verified]
+    CheckStatus -->|No - Inactive| ErrorInactive[Show: Account Inactive]
+    CheckStatus -->|Yes| CreateSession[Create Session]
+    
+    CreateSession --> CheckRole
+    
+    CheckRole -->|Employee<br/>Role=1| RedirectLeaves[Redirect to /leaves]
+    CheckRole -->|Approver<br/>Role=2,3,4| RedirectPortal[Redirect to /portal]
+    
+    RedirectLeaves --> End([User Authenticated])
+    RedirectPortal --> End
+    ErrorUnverified --> LoginPage
+    ErrorInactive --> LoginPage
+```
+
+### Registration & Verification Flow Diagram
+
+```mermaid
+flowchart TD
+    Start([HR Admin Initiates Registration]) --> RegForm[Fill Registration Form]
+    
+    RegForm --> CollectData[Collect: Name, Email,<br/>Password, Slack ID,<br/>Role, Approvers]
+    
+    CollectData --> CheckEnv{Environment<br/>Check}
+    
+    CheckEnv -->|APP_ENV=local| SkipSlack[Skip Slack Validation]
+    CheckEnv -->|Production/Staging| ValidateSlack{Validate Slack ID<br/>via API}
+    
+    ValidateSlack -->|API Unavailable| ShowError1[Show: Slack API Unavailable<br/>Please Retry]
+    ValidateSlack -->|Invalid Slack ID| ShowError2[Show: Invalid Slack ID]
+    ValidateSlack -->|Valid| CheckDuplicates
+    
+    SkipSlack --> CheckDuplicates{Check<br/>Duplicates}
+    
+    CheckDuplicates -->|Email Exists| ShowError3[Show: Email Already Registered]
+    CheckDuplicates -->|Slack ID Exists| ShowError4[Show: Slack ID Already Used]
+    CheckDuplicates -->|No Duplicates| CreateUser[Create User<br/>Status: for_verification]
+    
+    CreateUser --> GenToken[Generate Verification Token]
+    GenToken --> CheckEnv2{Environment<br/>Check}
+    
+    CheckEnv2 -->|APP_ENV=local| SkipSlackInvite[Skip Slack Operations]
+    CheckEnv2 -->|Production/Staging| SendSlackDM[Send Verification Link<br/>via Slack DM]
+    
+    SendSlackDM --> AddToChannel[Add User to<br/>Slack Leave Channel]
+    AddToChannel --> Success1[Registration Complete]
+    SkipSlackInvite --> Success1
+    
+    Success1 --> WaitVerify[User Receives Slack DM]
+    WaitVerify --> ClickLink[User Clicks<br/>Verification Link]
+    
+    ClickLink --> CheckToken{Token<br/>Valid?}
+    
+    CheckToken -->|Expired/Invalid| ShowError5[Show: Invalid/Expired Token<br/>Request New Link]
+    CheckToken -->|Already Verified| ShowInfo[Show: Already Verified]
+    CheckToken -->|Valid| ActivateAccount[Update Status: active<br/>Set verified_at]
+    
+    ActivateAccount --> Success2[Account Activated<br/>User Can Login]
+    
+    ShowError1 --> RegForm
+    ShowError2 --> RegForm
+    ShowError3 --> RegForm
+    ShowError4 --> RegForm
+```
+
+### Role-Based Access & Session Management
+
+```mermaid
+flowchart TD
+    Login([User Logs In]) --> CreateSession[Create New Session]
+    
+    CreateSession --> MultiSession{Existing<br/>Sessions?}
+    MultiSession -->|Yes| KeepBoth[Allow Multiple<br/>Concurrent Sessions]
+    MultiSession -->|No| FirstSession[First Session]
+    
+    KeepBoth --> ActiveSession[Session Active]
+    FirstSession --> ActiveSession
+    
+    ActiveSession --> UserAction{User Action}
+    
+    UserAction -->|Access Protected Route| CheckAuth{Authenticated<br/>& Active?}
+    UserAction -->|Logout| TerminateSession[Destroy Session]
+    UserAction -->|Account Deactivated| InvalidateNext[Invalidate at<br/>Next Request]
+    
+    CheckAuth -->|No| RedirectLogin[Redirect to Login]
+    CheckAuth -->|Yes| CheckRole{Check Role<br/>Permissions}
+    
+    CheckRole -->|Employee| EmployeeRoutes[Access /leaves<br/>& Employee Routes]
+    CheckRole -->|HR Approver| HRRoutes[Access /portal<br/>Registration, Admin]
+    CheckRole -->|TL Approver| TLRoutes[Access /portal<br/>TL Approval Queue]
+    CheckRole -->|PM Approver| PMRoutes[Access /portal<br/>PM Approval Queue]
+    CheckRole -->|Secondary Role| BothRoutes[Access Routes for<br/>Both Roles]
+    
+    TerminateSession --> RedirectLogin
+    InvalidateNext --> AutoLogout[Auto Logout<br/>on Next Request]
+    AutoLogout --> RedirectLogin
+```
+
+### Data Model Diagram
+
+```mermaid
+erDiagram
+    USER ||--|| ROLE : "has primary"
+    USER ||--o| ROLE : "has secondary (optional)"
+    USER ||--o{ VERIFICATION_TOKEN : "has"
+    USER ||--o{ SESSION : "has multiple"
+    USER }o--o{ USER : "default approvers"
+    
+    USER {
+        int id PK
+        string name
+        string email UK
+        string password_hash
+        string slack_id UK
+        int role_id FK
+        int secondary_role_id FK "nullable"
+        int status "0=deactivated, 1=active, 2=for_verification"
+        timestamp verified_at "nullable"
+        json default_approvers "HR, TL, PM user IDs"
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    ROLE {
+        int id PK
+        string name
+        string description
+    }
+    
+    VERIFICATION_TOKEN {
+        int id PK
+        int user_id FK
+        string token_hash UK
+        timestamp created_at
+        timestamp verified_at "nullable"
+        timestamp expires_at
+    }
+    
+    SESSION {
+        string id PK
+        int user_id FK "nullable"
+        string ip_address
+        string user_agent
+        text payload
+        int last_activity
+    }
+```
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Employee Login (Priority: P1)
