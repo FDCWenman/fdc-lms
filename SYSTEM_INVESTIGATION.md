@@ -2,8 +2,38 @@
 
 > **Purpose**: Comprehensive feature audit for Laravel + Livewire revamp planning  
 > **Investigated**: March 4, 2026  
+> **Last Updated**: March 6, 2026  
 > **Current Stack**: CakePHP 2.x + MySQL  
-> **Target Stack**: Laravel + Livewire
+> **Target Stack**: Laravel 12 + Livewire 4 + Flux UI (Free)  
+> **Implementation Status**: Authentication System (Phase 1-7 Complete)
+
+---
+
+## Implementation Progress
+
+### ✅ Completed (Phase 1-8: Authentication System)
+- **User Registration**: Public access with first_name, middle_name, last_name, hired_date, password fields
+- **Slack Integration**: Real-time Slack ID validation, verification via DM, environment-aware Slack toggling
+- **Access Control**: Role-based middleware, Spatie permissions, automatic employee role assignment
+- **Password Reset**: Token-based password reset with 1-hour expiration, Slack notifications
+- **Testing Infrastructure**: Comprehensive PHPUnit tests, Laravel Dusk E2E tests, GitHub Actions CI/CD
+- **User Model**: Enhanced with separate name fields (first/middle/last), hired date, verification status
+- **Token Management**: CleanupExpiredTokensJob for automatic token cleanup (daily at 2:00 AM)
+- **Factory Classes**: VerificationTokenFactory with expires_at field and test states
+- **Documentation**: Complete README.md with authentication flows, configuration, testing guide
+- **Code Quality**: Laravel Pint formatting, PSR-12 compliance
+
+### 🎯 Next Phase (Leave Application Features)
+- Leave request creation
+- Leave types and policies
+- Leave balance tracking
+- Approval workflow
+- Calendar integration
+
+### ⏳ Future Phases
+- Reports & analytics
+- Team calendar portal
+- Advanced leave credits system
 
 ---
 
@@ -67,8 +97,10 @@ FDCLeave is an internal leave management system for NativeCamp employees. It han
 - Account statuses: `for_verification (2)` → `active (1)` → `deactivated (0)`
 
 ### Email Verification
-- On registration, a verification link is sent via email (MD5 hash token)
+- On registration, a verification link is sent via **Slack DM** (not email)
 - Account activates on link click (`verified_at` timestamp set)
+- Verification tokens expire after 24 hours
+- In local environment with `ALLOW_SLACK_LOCAL=0`, verification URL is logged instead of sent via Slack
 
 ### Password Management
 - **Forgot Password**: Sends a reset link via **Slack DM** (not email)
@@ -76,9 +108,12 @@ FDCLeave is an internal leave management system for NativeCamp employees. It han
 - **Change Password**: Available from `/profile` with current password confirmation
 
 ### User Registration
-- Admin-driven registration
-- Slack ID is validated live against the Slack API during registration
-- User is added to the Slack workspace channel upon registration
+- Admin-driven registration (UPDATED: Now publicly accessible)
+- **Registration Fields**: first_name, middle_name (optional), last_name, email, password, slack_id, hired_date
+- Slack ID is validated live against the Slack API during registration (real-time on blur event)
+- User is added to the Slack workspace channel upon registration (if `ALLOW_SLACK_LOCAL=1` in local env)
+- **Default Role**: Automatically assigned "employee" role
+- **Status**: Created with `for_verification` status until Slack DM verification link is clicked
 
 ### Profile Management
 - User can update their **default approvers** (HR, TL, PM) stored as JSON

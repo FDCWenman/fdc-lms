@@ -43,6 +43,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Allow Slack in Local Environment
+    |--------------------------------------------------------------------------
+    |
+    | By default, Slack integration is disabled in local environment to avoid
+    | sending actual messages during development. Set ALLOW_SLACK_LOCAL=true
+    | in your .env file to enable Slack DMs in local environment.
+    |
+    */
+
+    'allow_slack_local' => (bool) env('ALLOW_SLACK_LOCAL', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |

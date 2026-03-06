@@ -9,6 +9,7 @@
 .env
 .env.backup
 .env.production
+.env.dusk.local
 .phpactor.json
 .phpunit.result.cache
 Homestead.json
@@ -18,6 +19,10 @@ yarn-error.log
 /auth.json
 /.fleet
 /.idea
+
+# Dusk
+/tests/Browser/screenshots
+/tests/Browser/console
 /.nova
 /.vscode
 /.zed

@@ -29,6 +29,55 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->configureAuthentication();
+    }
+
+    /**
+     * Configure authentication logic.
+     */
+    private function configureAuthentication(): void
+    {
+        // Customize authentication logic to check status and verification
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->email)->first();
+
+            if ($user && 
+                \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                
+                // Check if user is active (status = 1) AND verified (verified_at not null)
+                if ($user->status !== 1) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'email' => ['Your account has been deactivated.'],
+                    ]);
+                }
+
+                if (! $user->verified_at) {
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'email' => ['Your account has not been verified yet. Please check your Slack for the verification link.'],
+                    ]);
+                }
+
+                return $user;
+            }
+
+            return null;
+        });
+
+        // Configure redirect after authentication based on role
+        Fortify::redirects('login', function () {
+            $user = auth()->user();
+
+            // Redirect based on role
+            if ($user->hasRole('employee')) {
+                return '/leaves';
+            }
+
+            if ($user->isApprover()) {
+                return '/portal';
+            }
+
+            return '/dashboard';
+        });
     }
 
     /**
