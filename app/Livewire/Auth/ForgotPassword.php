@@ -21,6 +21,7 @@ use Livewire\Component;
 class ForgotPassword extends Component
 {
     public string $email = '';
+
     public bool $isSending = false;
 
     /**
@@ -42,14 +43,16 @@ class ForgotPassword extends Component
             // Find user by email
             $user = User::where('email', $this->email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 $this->addError('email', 'We could not find an account with that email address.');
+
                 return;
             }
 
             // Check if user has a Slack ID
-            if (!$user->slack_id) {
+            if (! $user->slack_id) {
                 $this->addError('email', 'This account does not have a Slack ID associated. Please contact HR.');
+
                 return;
             }
 
@@ -78,12 +81,13 @@ class ForgotPassword extends Component
             if ($shouldSendSlack) {
                 $sent = $slackService->sendPasswordResetDM($user->slack_id, $resetUrl);
 
-                if (!$sent) {
+                if (! $sent) {
                     Log::error('Failed to send password reset DM', [
                         'user_id' => $user->id,
                         'email' => $user->email,
                     ]);
                     $this->addError('email', 'Failed to send reset link. Please try again later.');
+
                     return;
                 }
             } else {

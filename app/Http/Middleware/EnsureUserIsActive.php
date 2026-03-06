@@ -22,7 +22,7 @@ class EnsureUserIsActive
             // Check if user is deactivated
             if ($user->status !== 1) {
                 // Invalidate all sessions for this user
-                $invalidator = new InvalidateDeactivatedSessionAction();
+                $invalidator = new InvalidateDeactivatedSessionAction;
                 $invalidator->execute($user->id);
 
                 Auth::logout();

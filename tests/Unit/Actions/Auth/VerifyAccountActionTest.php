@@ -20,7 +20,7 @@ class VerifyAccountActionTest extends TestCase
     {
         parent::setUp();
 
-        $this->action = new VerifyAccountAction();
+        $this->action = new VerifyAccountAction;
         config(['app.env' => 'local']); // Bypass Slack by default
     }
 

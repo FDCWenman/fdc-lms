@@ -14,7 +14,9 @@ use Livewire\Component;
 class Login extends Component
 {
     public string $email = '';
+
     public string $password = '';
+
     public bool $remember = false;
 
     public function mount(): void
@@ -85,7 +87,7 @@ class Login extends Component
 
     protected function throttleKey(): string
     {
-        return strtolower($this->email) . '|' . request()->ip();
+        return strtolower($this->email).'|'.request()->ip();
     }
 
     public function render()

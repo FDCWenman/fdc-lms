@@ -18,8 +18,6 @@ class VerificationController
     /**
      * Verify user account with token
      *
-     * @param  Request  $request
-     * @param  VerifyAccountAction  $action
      * @return \Illuminate\View\View
      */
     public function verify(Request $request, VerifyAccountAction $action)

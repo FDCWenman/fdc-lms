@@ -24,15 +24,15 @@ class LogoutTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'test@example.com')->first())
-                    ->visit('/portal')
-                    ->assertAuthenticated()
-                    ->click('button[aria-label="User menu"]')
-                    ->waitFor('a[href="/logout"]')
-                    ->click('a[href="/logout"]')
-                    ->waitForLocation('/')
-                    ->assertPathIs('/')
-                    ->assertGuest()
-                    ->assertSee('Sign in to your account');
+                ->visit('/portal')
+                ->assertAuthenticated()
+                ->click('button[aria-label="User menu"]')
+                ->waitFor('a[href="/logout"]')
+                ->click('a[href="/logout"]')
+                ->waitForLocation('/')
+                ->assertPathIs('/')
+                ->assertGuest()
+                ->assertSee('Sign in to your account');
         });
     }
 
@@ -49,14 +49,14 @@ class LogoutTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'test@example.com')->first())
-                    ->visit('/portal')
-                    ->click('button[aria-label="User menu"]')
-                    ->waitFor('a[href="/logout"]')
-                    ->click('a[href="/logout"]')
-                    ->waitForLocation('/')
-                    ->visit('/portal')
-                    ->assertPathIs('/')
-                    ->assertSee('Sign in to your account');
+                ->visit('/portal')
+                ->click('button[aria-label="User menu"]')
+                ->waitFor('a[href="/logout"]')
+                ->click('a[href="/logout"]')
+                ->waitForLocation('/')
+                ->visit('/portal')
+                ->assertPathIs('/')
+                ->assertSee('Sign in to your account');
         });
     }
 }

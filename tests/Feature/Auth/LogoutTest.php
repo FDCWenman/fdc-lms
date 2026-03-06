@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -91,7 +90,7 @@ class LogoutTest extends TestCase
         $user = User::factory()->create(['status' => 1]);
 
         // Create a session entry manually
-        $sessionId = 'test_session_' . $user->id;
+        $sessionId = 'test_session_'.$user->id;
         DB::table('sessions')->insert([
             'id' => $sessionId,
             'user_id' => $user->id,
@@ -147,15 +146,15 @@ class LogoutTest extends TestCase
         // Create multiple session entries
         $sessionIds = [];
         for ($i = 0; $i < 3; $i++) {
-            $sessionId = 'test_session_' . $user->id . '_' . $i;
+            $sessionId = 'test_session_'.$user->id.'_'.$i;
             $sessionIds[] = $sessionId;
 
             DB::table('sessions')->insert([
                 'id' => $sessionId,
                 'user_id' => $user->id,
-                'ip_address' => '127.0.0.' . ($i + 1),
-                'user_agent' => 'Test Browser ' . $i,
-                'payload' => base64_encode('test_data_' . $i),
+                'ip_address' => '127.0.0.'.($i + 1),
+                'user_agent' => 'Test Browser '.$i,
+                'payload' => base64_encode('test_data_'.$i),
                 'last_activity' => now()->timestamp,
             ]);
         }

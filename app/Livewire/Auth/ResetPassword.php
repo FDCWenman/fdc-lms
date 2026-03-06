@@ -20,10 +20,15 @@ use Livewire\Component;
 class ResetPassword extends Component
 {
     public string $token = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
+
     public bool $isResetting = false;
+
     public bool $tokenValid = true;
+
     public ?User $user = null;
 
     /**
@@ -38,15 +43,16 @@ class ResetPassword extends Component
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$verificationToken) {
+        if (! $verificationToken) {
             $this->tokenValid = false;
+
             return;
         }
 
         // Load user
         $this->user = User::find($verificationToken->user_id);
 
-        if (!$this->user) {
+        if (! $this->user) {
             $this->tokenValid = false;
         }
     }
@@ -56,7 +62,7 @@ class ResetPassword extends Component
      */
     public function resetPassword(): void
     {
-        if (!$this->tokenValid || !$this->user) {
+        if (! $this->tokenValid || ! $this->user) {
             return;
         }
 

@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\Log;
 class SlackService
 {
     protected string $botToken;
+
     protected string $channelId;
+
     protected string $webhookUrl;
+
     protected bool $isLocal;
+
     protected bool $allowSlackLocal;
 
     public function __construct()
@@ -28,14 +32,15 @@ class SlackService
      */
     public function validateSlackId(string $slackId): bool
     {
-        if ($this->isLocal && !$this->allowSlackLocal) {
+        if ($this->isLocal && ! $this->allowSlackLocal) {
             Log::info('Slack API bypassed in local environment', ['slack_id' => $slackId]);
+
             return true;
         }
 
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->botToken,
+                'Authorization' => 'Bearer '.$this->botToken,
             ])->get('https://slack.com/api/users.info', [
                 'user' => $slackId,
             ]);
@@ -61,12 +66,13 @@ class SlackService
     {
         if ($this->isLocal) {
             Log::info('Slack channel invitation bypassed in local environment', ['slack_id' => $slackId]);
+
             return true;
         }
 
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->botToken,
+                'Authorization' => 'Bearer '.$this->botToken,
             ])->post('https://slack.com/api/conversations.invite', [
                 'channel' => $this->channelId,
                 'users' => $slackId,
@@ -103,12 +109,13 @@ class SlackService
                 'slack_id' => $slackId,
                 'url' => $verificationUrl,
             ]);
+
             return true;
         }
 
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->botToken,
+                'Authorization' => 'Bearer '.$this->botToken,
             ])->post('https://slack.com/api/chat.postMessage', [
                 'channel' => $slackId,
                 'text' => "Welcome to FDCLeave! Please verify your account by clicking the link below:\n\n{$verificationUrl}\n\nThis link will expire in 24 hours.",
@@ -165,17 +172,18 @@ class SlackService
      */
     public function sendPasswordResetDM(string $slackId, string $resetUrl): bool
     {
-        if ($this->isLocal && !$this->allowSlackLocal) {
+        if ($this->isLocal && ! $this->allowSlackLocal) {
             Log::info('Slack password reset DM bypassed in local environment', [
                 'slack_id' => $slackId,
                 'url' => $resetUrl,
             ]);
+
             return true;
         }
 
         try {
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $this->botToken,
+                'Authorization' => 'Bearer '.$this->botToken,
             ])->post('https://slack.com/api/chat.postMessage', [
                 'channel' => $slackId,
                 'text' => "You requested to reset your FDCLeave password. Click the link below to reset it:\n\n{$resetUrl}\n\nThis link will expire in 1 hour. If you didn't request this, please ignore this message.",

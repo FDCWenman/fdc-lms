@@ -15,10 +15,10 @@ class LoginTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->assertSee('Sign in to your account')
-                    ->assertInputPresent('email')
-                    ->assertInputPresent('password')
-                    ->assertSee('Sign in');
+                ->assertSee('Sign in to your account')
+                ->assertInputPresent('email')
+                ->assertInputPresent('password')
+                ->assertSee('Sign in');
         });
     }
 
@@ -35,12 +35,12 @@ class LoginTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->type('email', 'test@example.com')
-                    ->type('password', 'password')
-                    ->press('Sign in')
-                    ->waitForLocation('/portal')
-                    ->assertPathIs('/portal')
-                    ->assertAuthenticated();
+                ->type('email', 'test@example.com')
+                ->type('password', 'password')
+                ->press('Sign in')
+                ->waitForLocation('/portal')
+                ->assertPathIs('/portal')
+                ->assertAuthenticated();
         });
     }
 
@@ -48,12 +48,12 @@ class LoginTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->type('email', 'wrong@example.com')
-                    ->type('password', 'wrongpassword')
-                    ->press('Sign in')
-                    ->waitForText('These credentials do not match our records')
-                    ->assertSee('These credentials do not match our records')
-                    ->assertGuest();
+                ->type('email', 'wrong@example.com')
+                ->type('password', 'wrongpassword')
+                ->press('Sign in')
+                ->waitForText('These credentials do not match our records')
+                ->assertSee('These credentials do not match our records')
+                ->assertGuest();
         });
     }
 
@@ -68,12 +68,12 @@ class LoginTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->type('email', 'inactive@example.com')
-                    ->type('password', 'password')
-                    ->press('Sign in')
-                    ->waitForText('Your account has been deactivated')
-                    ->assertSee('Your account has been deactivated')
-                    ->assertGuest();
+                ->type('email', 'inactive@example.com')
+                ->type('password', 'password')
+                ->press('Sign in')
+                ->waitForText('Your account has been deactivated')
+                ->assertSee('Your account has been deactivated')
+                ->assertGuest();
         });
     }
 
@@ -88,12 +88,12 @@ class LoginTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->type('email', 'unverified@example.com')
-                    ->type('password', 'password')
-                    ->press('Sign in')
-                    ->waitForLocation('/auth/verify')
-                    ->assertPathIs('/auth/verify')
-                    ->assertSee('Verify your email address');
+                ->type('email', 'unverified@example.com')
+                ->type('password', 'password')
+                ->press('Sign in')
+                ->waitForLocation('/auth/verify')
+                ->assertPathIs('/auth/verify')
+                ->assertSee('Verify your email address');
         });
     }
 
@@ -110,11 +110,11 @@ class LoginTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                    ->type('email', 'hr@example.com')
-                    ->type('password', 'password')
-                    ->press('Sign in')
-                    ->waitForLocation('/portal')
-                    ->assertPathIs('/portal');
+                ->type('email', 'hr@example.com')
+                ->type('password', 'password')
+                ->press('Sign in')
+                ->waitForLocation('/portal')
+                ->assertPathIs('/portal');
         });
     }
 }

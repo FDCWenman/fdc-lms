@@ -30,8 +30,8 @@ class RegistrationTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/auth/register')
-                    ->assertPathIs('/')
-                    ->assertSee('Sign in to your account');
+                ->assertPathIs('/')
+                ->assertSee('Sign in to your account');
         });
     }
 
@@ -48,9 +48,9 @@ class RegistrationTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'employee@example.com')->first())
-                    ->visit('/auth/register')
-                    ->assertPathIs('/portal')
-                    ->assertDontSee('Register User');
+                ->visit('/auth/register')
+                ->assertPathIs('/portal')
+                ->assertDontSee('Register User');
         });
     }
 
@@ -58,12 +58,12 @@ class RegistrationTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'hr@example.com')->first())
-                    ->visit('/auth/register')
-                    ->assertPathIs('/auth/register')
-                    ->assertSee('Register User')
-                    ->assertInputPresent('name')
-                    ->assertInputPresent('email')
-                    ->assertInputPresent('slack_user_id');
+                ->visit('/auth/register')
+                ->assertPathIs('/auth/register')
+                ->assertSee('Register User')
+                ->assertInputPresent('name')
+                ->assertInputPresent('email')
+                ->assertInputPresent('slack_user_id');
         });
     }
 
@@ -71,13 +71,13 @@ class RegistrationTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'hr@example.com')->first())
-                    ->visit('/auth/register')
-                    ->type('name', 'John Doe')
-                    ->type('email', 'john@example.com')
-                    ->type('slack_user_id', 'U12345678')
-                    ->press('Register User')
-                    ->waitForText('User registered successfully')
-                    ->assertSee('User registered successfully');
+                ->visit('/auth/register')
+                ->type('name', 'John Doe')
+                ->type('email', 'john@example.com')
+                ->type('slack_user_id', 'U12345678')
+                ->press('Register User')
+                ->waitForText('User registered successfully')
+                ->assertSee('User registered successfully');
         });
 
         $this->assertDatabaseHas('users', [
@@ -91,13 +91,13 @@ class RegistrationTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'hr@example.com')->first())
-                    ->visit('/auth/register')
-                    ->type('name', 'Jane Doe')
-                    ->type('email', 'invalid-email')
-                    ->type('slack_user_id', 'U87654321')
-                    ->press('Register User')
-                    ->waitForText('The email field must be a valid email address')
-                    ->assertSee('The email field must be a valid email address');
+                ->visit('/auth/register')
+                ->type('name', 'Jane Doe')
+                ->type('email', 'invalid-email')
+                ->type('slack_user_id', 'U87654321')
+                ->press('Register User')
+                ->waitForText('The email field must be a valid email address')
+                ->assertSee('The email field must be a valid email address');
         });
     }
 
@@ -107,13 +107,13 @@ class RegistrationTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::where('email', 'hr@example.com')->first())
-                    ->visit('/auth/register')
-                    ->type('name', 'Duplicate User')
-                    ->type('email', 'existing@example.com')
-                    ->type('slack_user_id', 'U11111111')
-                    ->press('Register User')
-                    ->waitForText('The email has already been taken')
-                    ->assertSee('The email has already been taken');
+                ->visit('/auth/register')
+                ->type('name', 'Duplicate User')
+                ->type('email', 'existing@example.com')
+                ->type('slack_user_id', 'U11111111')
+                ->press('Register User')
+                ->waitForText('The email has already been taken')
+                ->assertSee('The email has already been taken');
         });
     }
 }

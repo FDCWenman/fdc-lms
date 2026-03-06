@@ -19,7 +19,6 @@ class VerifyAccountAction
     /**
      * Execute the verification action.
      *
-     * @param  string  $token
      * @return array{success: bool, message: string, user?: User}
      */
     public function execute(string $token): array
@@ -93,7 +92,6 @@ class VerifyAccountAction
     /**
      * Request a new verification link for a user.
      *
-     * @param  string  $email
      * @return array{success: bool, message: string}
      */
     public function requestNewVerification(string $email): array

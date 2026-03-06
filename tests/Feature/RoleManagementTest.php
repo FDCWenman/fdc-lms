@@ -14,7 +14,7 @@ class RoleManagementTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Run seeders
         $this->artisan('db:seed', ['--class' => 'PermissionSeeder']);
         $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
