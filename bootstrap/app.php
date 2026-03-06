@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'user.active' => \App\Http\Middleware\EnsureUserIsActive::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
         // Apply EnsureUserIsActive to web routes
