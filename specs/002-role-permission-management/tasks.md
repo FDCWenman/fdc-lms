@@ -231,14 +231,14 @@
 - [ ] T124 Ensure all forms have proper CSRF protection (automatic in Livewire)
 - [ ] T125 Add keyboard shortcuts for common actions (optional)
 - [ ] T126 Test responsive design on mobile devices
-- [ ] T127 Add role management link to admin navigation menu
+- [X] T127 Add role management link to admin navigation menu
 - [ ] T128 Create user documentation for role management
 - [ ] T129 Create administrator guide for permission system
 - [ ] T130 Run full test suite: php artisan test
 - [ ] T131 Check test coverage: php artisan test --coverage --min=80
 - [ ] T132 Run Pint on all modified files: vendor/bin/pint
 - [ ] T133 Review all error messages for clarity
-- [ ] T134 Verify all authorization checks are in place
+- [X] T134 Verify all authorization checks are in place
 - [ ] T135 Test with multiple users and roles simultaneously
 - [ ] T136 Performance test: measure query counts and response times
 - [ ] T137 Security review: verify CSRF, XSS prevention, SQL injection prevention
