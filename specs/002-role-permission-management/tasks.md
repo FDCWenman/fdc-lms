@@ -74,17 +74,17 @@
 
 **Independent Test**: View permissions list, verify all seeded permissions appear with descriptions
 
-- [ ] T034 [US2] Write feature test: administrator can view permissions list in tests/Feature/PermissionManagementTest.php
-- [ ] T035 [US2] Write feature test: permissions grouped by category in tests/Feature/PermissionManagementTest.php
-- [ ] T036 [US2] Write feature test: permissions show name and description in tests/Feature/PermissionManagementTest.php
-- [ ] T037 [US2] Run tests (should fail): php artisan test --filter=PermissionManagement
-- [ ] T038 [P] [US2] Create ViewPermissions Livewire component in app/Http/Livewire/Roles/ViewPermissions.php
-- [ ] T039 [P] [US2] Create view-permissions Blade view in resources/views/livewire/roles/view-permissions.blade.php
-- [ ] T040 [US2] Implement permissions grouping by category logic
-- [ ] T041 [US2] Add search/filter functionality for permissions
-- [ ] T042 [US2] Run tests (should pass): php artisan test --filter=PermissionManagement
-- [ ] T043 [US2] Test manually: View permissions, verify categories and descriptions
-- [ ] T044 [US2] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/ViewPermissions.php
+- [X] T034 [US2] Write feature test: administrator can view permissions list in tests/Feature/PermissionManagementTest.php
+- [X] T035 [US2] Write feature test: permissions grouped by category in tests/Feature/PermissionManagementTest.php
+- [X] T036 [US2] Write feature test: permissions show name and description in tests/Feature/PermissionManagementTest.php
+- [X] T037 [US2] Run tests (should fail): php artisan test --filter=PermissionManagement
+- [X] T038 [P] [US2] Create ViewPermissions Livewire component in app/Http/Livewire/Roles/ViewPermissions.php
+- [X] T039 [P] [US2] Create view-permissions Blade view in resources/views/livewire/roles/view-permissions.blade.php
+- [X] T040 [US2] Implement permissions grouping by category logic
+- [X] T041 [US2] Add search/filter functionality for permissions
+- [X] T042 [US2] Run tests (should pass): php artisan test --filter=PermissionManagement
+- [X] T043 [US2] Test manually: View permissions, verify categories and descriptions
+- [X] T044 [US2] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/ViewPermissions.php
 
 **Deliverable**: Read-only permissions viewer organized by category
 
