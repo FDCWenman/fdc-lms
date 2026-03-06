@@ -11,7 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Register custom middleware
+        $middleware->alias([
+            'user.active' => \App\Http\Middleware\EnsureUserIsActive::class,
+            'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        ]);
+
+        // Apply EnsureUserIsActive to web routes
+        $middleware->web(append: [
+            \App\Http\Middleware\EnsureUserIsActive::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

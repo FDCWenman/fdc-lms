@@ -27,15 +27,15 @@ This feature follows an **incremental delivery approach** where each user story 
 
 **Goal**: Initialize project infrastructure and dependencies
 
-- [ ] T001 Install and configure Laravel Fortify in config/fortify.php
+- [X] T001 Install and configure Laravel Fortify in config/fortify.php
 - [ ] T002 [P] Install Spatie Laravel Permission package via composer
 - [ ] T003 [P] Publish Spatie migrations and run to create roles/permissions tables
-- [ ] T004 [P] Configure Slack API credentials in config/services.php
-- [ ] T005 [P] Set up database session driver in config/session.php
-- [ ] T006 [P] Create verification_tokens table migration in database/migrations/
-- [ ] T007 [P] Remove legacy role_id/secondary_role_id columns from users table (if exist)
+- [X] T004 [P] Configure Slack API credentials in config/services.php
+- [X] T005 [P] Set up database session driver in config/session.php
+- [X] T006 [P] Create verification_tokens table migration in database/migrations/
+- [X] T007 [P] Remove legacy role_id/secondary_role_id columns from users table (if exist)
 - [ ] T008 Run migrations to set up database schema
-- [ ] T009 Seed roles table with 4 roles using Spatie (employee, hr, team-lead, project-manager)
+- [X] T009 Seed roles table with 4 roles using Spatie (employee, hr, team-lead, project-manager)
 
 ---
 
@@ -47,18 +47,18 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Models & Core Services
 
-- [ ] T010 [P] Create VerificationToken model in app/Models/VerificationToken.php
-- [ ] T011 [P] Update User model to use Spatie HasRoles trait in app/Models/User.php
-- [ ] T012 Create SlackService with environment-aware behavior in app/Services/SlackService.php
-- [ ] T013 Write unit tests for SlackService in tests/Unit/Services/SlackServiceTest.php
+- [X] T010 [P] Create VerificationToken model in app/Models/VerificationToken.php
+- [X] T011 [P] Update User model to use Spatie HasRoles trait in app/Models/User.php
+- [X] T012 Create SlackService with environment-aware behavior in app/Services/SlackService.php
+- [X] T013 Write unit tests for SlackService in tests/Unit/Services/SlackServiceTest.php
 
 ### Middleware & Authentication
 
-- [ ] T014 [P] Create EnsureUserIsActive middleware in app/Http/Middleware/EnsureUserIsActive.php
-- [ ] T015 [P] Use Spatie's built-in role middleware (configured in bootstrap/app.php)
-- [ ] T016 [P] Create RedirectIfAuthenticated middleware in app/Http/Middleware/RedirectIfAuthenticated.php
-- [ ] T017 Configure Fortify authentication logic in app/Providers/FortifyServiceProvider.php
-- [ ] T018 Register middleware in bootstrap/app.php
+- [X] T014 [P] Create EnsureUserIsActive middleware in app/Http/Middleware/EnsureUserIsActive.php
+- [X] T015 [P] Use Spatie's built-in role middleware (configured in bootstrap/app.php)
+- [X] T016 [P] Create RedirectIfAuthenticated middleware in app/Http/Middleware/RedirectIfAuthenticated.php
+- [X] T017 Configure Fortify authentication logic in app/Providers/FortifyServiceProvider.php
+- [X] T018 Register middleware in bootstrap/app.php
 
 ---
 
@@ -77,28 +77,28 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### UI Components
 
-- [ ] T019 [US1] Create Login Livewire component in app/Livewire/Auth/Login.php
-- [ ] T020 [US1] Create login Blade view with Flux UI components in resources/views/livewire/auth/login.blade.php
-- [ ] T021 [US1] Add FDC logo display to login page using public/images/fdc.png
+- [X] T019 [US1] Create Login Livewire component in app/Livewire/Auth/Login.php
+- [X] T020 [US1] Create login Blade view with Flux UI components in resources/views/livewire/auth/login.blade.php
+- [X] T021 [US1] Add FDC logo display to login page using public/images/fdc.png
 
 ### Authentication Logic
 
-- [ ] T022 [US1] Configure Fortify to check status=1 AND verified_at in app/Providers/FortifyServiceProvider.php
-- [ ] T023 [US1] Implement role-based redirect logic using Spatie's hasRole() in app/Providers/FortifyServiceProvider.php
-- [ ] T024 [US1] Add RedirectIfAuthenticated middleware to login route in routes/web.php
+- [X] T022 [US1] Configure Fortify to check status=1 AND verified_at in app/Providers/FortifyServiceProvider.php
+- [X] T023 [US1] Implement role-based redirect logic using Spatie's hasRole() in app/Providers/FortifyServiceProvider.php
+- [X] T024 [US1] Add RedirectIfAuthenticated middleware to login route in routes/web.php
 
 ### Routes
 
-- [ ] T025 [US1] Define login routes in routes/web.php
+- [X] T025 [US1] Define login routes in routes/web.php
 
 ### Tests
 
-- [ ] T026 [US1] Write feature test for successful employee login in tests/Feature/Auth/LoginTest.php
-- [ ] T027 [US1] Write feature test for successful approver login (hr/team-lead/project-manager) in tests/Feature/Auth/LoginTest.php
-- [ ] T028 [US1] Write feature test for unverified user login rejection in tests/Feature/Auth/LoginTest.php
-- [ ] T029 [US1] Write feature test for inactive user login rejection in tests/Feature/Auth/LoginTest.php
-- [ ] T030 [US1] Write feature test for invalid credentials in tests/Feature/Auth/LoginTest.php
-- [ ] T031 [US1] Write feature test for authenticated user redirect from login page in tests/Feature/Auth/LoginTest.php
+- [X] T026 [US1] Write feature test for successful employee login in tests/Feature/Auth/LoginTest.php
+- [X] T027 [US1] Write feature test for successful approver login (hr/team-lead/project-manager) in tests/Feature/Auth/LoginTest.php
+- [X] T028 [US1] Write feature test for unverified user login rejection in tests/Feature/Auth/LoginTest.php
+- [X] T029 [US1] Write feature test for inactive user login rejection in tests/Feature/Auth/LoginTest.php
+- [X] T030 [US1] Write feature test for invalid credentials in tests/Feature/Auth/LoginTest.php
+- [X] T031 [US1] Write feature test for authenticated user redirect from login page in tests/Feature/Auth/LoginTest.php
 
 ---
 
