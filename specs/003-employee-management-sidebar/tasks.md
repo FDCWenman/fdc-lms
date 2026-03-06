@@ -62,20 +62,20 @@
 
 ### Implementation for User Story 1
 
-- [ ] T017 [US1] Create ManageEmployees Livewire component in app/Livewire/Employees/ManageEmployees.php with properties: $search, $statusFilter
-- [ ] T018 [US1] Add computed property employees() with User query, eager load roles in app/Livewire/Employees/ManageEmployees.php
-- [ ] T019 [US1] Implement search filtering (name/email) in employees() method in app/Livewire/Employees/ManageEmployees.php
-- [ ] T020 [US1] Implement status filtering in employees() method in app/Livewire/Employees/ManageEmployees.php
-- [ ] T021 [US1] Add pagination (15 per page) in employees() method in app/Livewire/Employees/ManageEmployees.php
-- [ ] T022 [US1] Create Blade view with Flux UI card in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T023 [US1] Add Flux search input (wire:model.live="search") in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T024 [US1] Add Flux status filter dropdown in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T025 [US1] Add Flux table displaying employees (name, email, status, roles) in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T026 [US1] Add Flux badges for status display (Active/Deactivated/Pending) in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T027 [US1] Add Flux avatars or initials for employees in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T028 [US1] Add pagination controls in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T029 [US1] Add empty state message when no employees match filters in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T030 [US1] Add loading states (wire:loading) for search and filter in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T017 [US1] Create ManageEmployees Livewire component in app/Livewire/Employees/ManageEmployees.php with properties: $search, $statusFilter
+- [X] T018 [US1] Add computed property employees() with User query, eager load roles in app/Livewire/Employees/ManageEmployees.php
+- [X] T019 [US1] Implement search filtering (name/email) in employees() method in app/Livewire/Employees/ManageEmployees.php
+- [X] T020 [US1] Implement status filtering in employees() method in app/Livewire/Employees/ManageEmployees.php
+- [X] T021 [US1] Add pagination (15 per page) in employees() method in app/Livewire/Employees/ManageEmployees.php
+- [X] T022 [US1] Create Blade view with Flux UI card in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T023 [US1] Add Flux search input (wire:model.live="search") in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T024 [US1] Add Flux status filter dropdown in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T025 [US1] Add Flux table displaying employees (name, email, status, roles) in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T026 [US1] Add Flux badges for status display (Active/Deactivated/Pending) in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T027 [US1] Add Flux avatars or initials for employees in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T028 [US1] Add pagination controls in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T029 [US1] Add empty state message when no employees match filters in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T030 [US1] Add loading states (wire:loading) for search and filter in resources/views/livewire/employees/manage-employees.blade.php
 
 **Run tests - Expected: 8 passes** → `php artisan test --filter=EmployeeListTest`
 
