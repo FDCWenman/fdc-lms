@@ -1,92 +1,100 @@
-<div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Assign Roles: {{ $user->name }}</h2>
-                        <p class="text-sm text-gray-600 mt-1">{{ $user->email }}</p>
-                    </div>
-                    <a href="{{ route('admin.roles.index') }}" class="text-blue-600 hover:text-blue-800">
-                        Back to Roles
-                    </a>
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    {{-- Header --}}
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <flux:avatar size="lg">
+                    {{ strtoupper(substr($user->name, 0, 2)) }}
+                </flux:avatar>
+                <div>
+                    <flux:heading size="xl">{{ $user->name }}</flux:heading>
+                    <flux:subheading>{{ $user->email }}</flux:subheading>
                 </div>
+            </div>
+            <flux:button variant="ghost" icon="arrow-left" href="{{ route('admin.roles.index') }}">
+                Back to Roles
+            </flux:button>
+        </div>
+    </div>
 
-                @if (session()->has('message'))
-                    <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                        <span class="block sm:inline">{{ session('message') }}</span>
-                    </div>
-                @endif
+    @if (session()->has('message'))
+        <flux:callout variant="success" icon="check-circle" class="mb-6">
+            {{ session('message') }}
+        </flux:callout>
+    @endif
+
+    <div class="grid gap-6 lg:grid-cols-3">
+        {{-- Roles Selection --}}
+        <div class="lg:col-span-2">
+            <flux:card>
+                <flux:heading size="lg" class="mb-4">Available Roles</flux:heading>
 
                 <form wire:submit.prevent="updateRoles">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Available Roles</h3>
-
-                        <div class="space-y-4">
-                            @foreach($roles as $role)
-                                <div class="flex items-start border rounded-lg p-4 {{ in_array($role->id, $selectedRoles) ? 'bg-blue-50 border-blue-300' : 'border-gray-200' }}">
-                                    <div class="flex items-center h-5">
-                                        <input 
-                                            type="checkbox" 
-                                            wire:model="selectedRoles" 
-                                            value="{{ $role->id }}"
-                                            id="role-{{ $role->id }}"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                                        >
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <label for="role-{{ $role->id }}" class="font-medium text-gray-900 cursor-pointer flex items-center">
-                                            {{ $role->name }}
+                    <div class="space-y-3">
+                        @foreach($roles as $role)
+                            <div class="flex items-start p-4 rounded-xl border {{ in_array($role->id, $selectedRoles) ? 'bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-600' : 'border-zinc-200 dark:border-zinc-700' }}">
+                                <flux:checkbox
+                                    wire:model="selectedRoles"
+                                    value="{{ $role->id }}"
+                                    id="role-{{ $role->id }}"
+                                />
+                                <div class="ml-3 flex-1">
+                                    <label for="role-{{ $role->id }}" class="cursor-pointer">
+                                        <div class="flex items-center gap-2">
+                                            <flux:heading size="sm">{{ $role->name }}</flux:heading>
                                             @if($role->is_protected)
-                                                <span class="ml-2 inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                                                    Protected
-                                                </span>
+                                                <flux:badge color="amber" size="sm" icon="shield-check">System</flux:badge>
                                             @endif
-                                        </label>
+                                        </div>
                                         @if($role->description)
-                                            <p class="text-sm text-gray-600 mt-1">{{ $role->description }}</p>
+                                            <flux:text class="mt-1">{{ $role->description }}</flux:text>
                                         @endif
-                                        <p class="text-xs text-gray-500 mt-2">
-                                            Permissions: {{ $role->permissions->pluck('name')->implode(', ') ?: 'None' }}
-                                        </p>
-                                    </div>
+                                        <flux:text size="sm" class="mt-2 text-zinc-500">
+                                            {{ $role->permissions->count() }} permissions
+                                        </flux:text>
+                                    </label>
                                 </div>
-                            @endforeach
-                        </div>
+                            </div>
+                        @endforeach
                     </div>
 
                     @error('selectedRoles')
-                        <div class="text-red-500 text-sm mb-4">{{ $message }}</div>
-                    @enderror
-
-                    @error('selectedRoles.*')
-                        <div class="text-red-500 text-sm mb-4">{{ $message }}</div>
+                        <flux:callout variant="danger" icon="exclamation-circle" class="mt-4">
+                            {{ $message }}
+                        </flux:callout>
                     @enderror
 
                     <div class="flex justify-end mt-6">
-                        <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                            Update Roles
-                        </button>
+                        <flux:button variant="primary" type="submit" wire:loading.attr="disabled">
+                            <span wire:loading.remove>Update Roles</span>
+                            <span wire:loading>Saving...</span>
+                        </flux:button>
                     </div>
                 </form>
+            </flux:card>
+        </div>
 
-                <div class="mt-8 border-t pt-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Current Permissions</h3>
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        @if($user->permissions->count() > 0)
-                            <div class="text-sm text-gray-700">
-                                <ul class="list-disc list-inside space-y-1">
-                                    @foreach($user->getAllPermissions() as $permission)
-                                        <li>{{ $permission->name }}</li>
-                                    @endforeach
-                                </ul>
+        {{-- Current Permissions Sidebar --}}
+        <div>
+            <flux:card>
+                <flux:heading size="lg" class="mb-4">Current Permissions</flux:heading>
+                
+                @if($user->getAllPermissions()->count() > 0)
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                        @foreach($user->getAllPermissions() as $permission)
+                            <div class="flex items-center gap-2">
+                                <flux:icon.check-circle class="size-4 text-green-500" />
+                                <flux:text size="sm">{{ $permission->name }}</flux:text>
                             </div>
-                        @else
-                            <p class="text-sm text-gray-500">No permissions assigned yet.</p>
-                        @endif
+                        @endforeach
                     </div>
-                </div>
-            </div>
+                @else
+                    <div class="text-center py-6">
+                        <flux:icon.shield-exclamation class="mx-auto size-8 text-zinc-400" />
+                        <flux:text class="mt-2">No permissions assigned</flux:text>
+                    </div>
+                @endif
+            </flux:card>
         </div>
     </div>
 </div>
