@@ -1,12 +1,13 @@
-# FDC LMS - Laravel Learning Management System
+# FDC LMS - Leave Management System
 
-A comprehensive Laravel 12 application with Livewire 4, Fortify authentication, and role-based access control.
+A comprehensive Laravel 12 leave management application with Livewire 4, Fortify authentication, Slack integration, and role-based access control.
 
 ## Table of Contents
 
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Authentication System](#authentication-system)
+- [Password Reset](#password-reset)
 - [Slack Integration](#slack-integration)
 - [Environment Configuration](#environment-configuration)
 - [Roles & Permissions](#roles--permissions)
@@ -17,11 +18,11 @@ A comprehensive Laravel 12 application with Livewire 4, Fortify authentication, 
 ## Requirements
 
 - PHP 8.3.30+
-- Composer
-- Node.js & NPM
+- Composer 2.x
+- Node.js 18+ & NPM
 - Docker (optional, recommended for development)
-- MySQL 8.0+ or SQLite (for development)
-- Slack workspace with API access (for production)
+- SQLite (development) or MySQL 8.0+ (production)
+- Slack workspace with Bot API access (optional for local)
 
 ## Installation
 
@@ -35,6 +36,9 @@ cd fdc-lms
 # Copy environment file
 cp .env.example .env
 
+# Update .env with your Docker container ID
+# LOCAL_DOCKER="your_container_id"
+
 # Install dependencies using Docker
 docker exec <container_id> composer install
 docker exec <container_id> npm install
@@ -45,11 +49,13 @@ docker exec <container_id> php artisan key:generate
 # Run migrations
 docker exec <container_id> php artisan migrate
 
+# Seed roles and permissions
+docker exec <container_id> php artisan db:seed
+
 # Build assets
 docker exec <container_id> npm run build
 
-# Start the application
-docker exec <container_id> php artisan serve
+# Access the application at http://localhost:8000
 ```
 
 ### Local Installation
@@ -69,8 +75,14 @@ npm install
 # Generate application key
 php artisan key:generate
 
+# Create SQLite database
+touch database/database.sqlite
+
 # Run migrations
 php artisan migrate
+
+# Seed roles and permissions
+php artisan db:seed
 
 # Build assets
 npm run build
@@ -83,33 +95,46 @@ php artisan serve
 
 ### Overview
 
-The application uses **Laravel Fortify** for authentication with custom logic:
+The application uses **Laravel Fortify** with enhanced Slack integration:
 
-- **Login**: Email + password authentication with auto-logout for deactivated users
-- **Registration**: HR-only feature with real-time Slack ID validation
-- **Email Verification**: Token-based account activation system
-- **Role-Based Redirection**: Users redirected based on assigned roles after login
-- **Session Management**: Multi-session support with automatic invalidation for deactivated users
+- **Registration**: Public access with real-time Slack ID validation
+  - Fields: first_name, middle_name (optional), last_name, email, password, slack_id, hired_date
+  - Auto-assigns "employee" role
+  - Sends verification link via Slack DM
+- **Login**: Email + password authentication with status checks
+- **Email Verification**: 24-hour token-based activation via Slack DM
+- **Password Reset**: Slack DM delivery with 1-hour token expiration
+- **Role-Based Redirection**: Automatic redirect based on user roles after login
+- **Session Management**: Auto-logout for deactivated/unverified users
 
 ### User Statuses
 
 | Status | Code | Description |
 |--------|------|-------------|
 | Deactivated | 0 | Account disabled, cannot login |
-| Active | 1 | Fully active account |
-| Pending Verification | 2 | Account created, awaiting email verification |
+| Active | 1 | Fully active and verified account |
+| Pending Verification | 2 | Account created, awaiting Slack DM verification |
 
 ### Authentication Flow
 
-#### 1. Registration (HR Only)
+#### 1. Registration (Public Access)
 
-1. HR navigates to `/auth/register`
-2. HR enters new employee details (name, email, Slack ID, role)
+1. Anyone navigates to `/register`
+2. User enters details: first_name, middle_name, last_name, email, password, slack_id, hired_date
 3. System validates Slack ID in real-time against Slack API
-4. Account created with `status=2` (Pending Verification)
-5. Verification token generated and sent via Slack DM
+4. Account created with `status=2` (Pending Verification) and default "employee" role
+5. Verification token generated (24-hour expiration) and sent via Slack DM
 
-#### 2. Account Verification
+#### 2. Password Reset
+
+1. User navigates to `/forgot-password`
+2. User enters email address
+3. System finds user and generates reset token (1-hour expiration)
+4. Reset link sent via Slack DM to user's slack_id
+5. User clicks link and enters new password
+6. Token consumed and user redirected to login
+
+#### 3. Account Verification
 
 1. Employee receives Slack DM with verification link
 2. Employee clicks link: `/auth/verify?token=<token>`
@@ -117,7 +142,7 @@ The application uses **Laravel Fortify** for authentication with custom logic:
 4. Account status updated to `status=1` (Active)
 5. Employee can now login
 
-#### 3. Login & Redirection
+#### 4. Login & Redirection
 
 1. Employee logs in with email + password
 2. System checks account status (must be `status=1`)
@@ -125,7 +150,7 @@ The application uses **Laravel Fortify** for authentication with custom logic:
    - **Employee**: `/leaves` (Leave Request page)
    - **Approvers** (HR, Team Lead, Project Manager): `/portal` (Approval Portal)
 
-#### 4. Logout & Session Cleanup
+#### 5. Logout & Session Cleanup
 
 1. User clicks logout button in navbar
 2. System invalidates current session
@@ -137,13 +162,15 @@ The application uses **Laravel Fortify** for authentication with custom logic:
 
 ```php
 // Guest routes
-Route::get('/auth/login', Login::class)->name('login');
-Route::get('/auth/register', Register::class)->middleware('auth', 'role:hr')->name('register');
+Route::get('/login', Login::class)->name('login');
+Route::get('/register', Register::class)->name('register');
+Route::get('/forgot-password', ForgotPassword::class)->name('password.request');
+Route::get('/reset-password/{token}', ResetPassword::class)->name('password.reset');
 Route::get('/auth/verify', [VerificationController::class, 'verify'])->name('auth.verify');
 Route::get('/auth/request-verification', RequestNewVerification::class)->name('auth.request-verification');
 
 // Authenticated routes
-Route::middleware(['auth', 'ensure-user-active'])->group(function () {
+Route::middleware(['auth', 'user.active'])->group(function () {
     Route::get('/leaves', Leaves::class)->middleware('role:employee')->name('leaves');
     Route::get('/portal', Portal::class)->middleware('role:hr|team-lead|project-manager')->name('portal');
 });
@@ -156,14 +183,37 @@ Route::post('/logout', function (Request $request) {
 })->middleware('auth')->name('logout');
 ```
 
+## Password Reset
+
+### How It Works
+
+1. User clicks "Forgot your password?" on login page
+2. User enters their email address
+3. System:
+   - Finds user by email
+   - Generates 1-hour password reset token
+   - Sends reset link via Slack DM to user's slack_id
+4. User clicks link in Slack and sets new password
+5. Token is consumed and deleted
+6. User redirected to login with success message
+
+### Local Development
+
+In local environment with `ALLOW_SLACK_LOCAL=0`, the reset URL is logged instead of sent via Slack:
+
+```bash
+docker exec <container_id> tail -f storage/logs/laravel.log
+```
+
 ## Slack Integration
 
 ### Purpose
 
 Slack integration ensures:
 - **User Identity Verification**: Validates Slack IDs during registration
-- **Direct Messaging**: Sends verification links via Slack DM
-- **Environment-Aware**: Bypasses Slack in local development, enforces in production/staging
+- **Direct Messaging**: Sends verification and password reset links via Slack DM
+- **Environment-Aware**: Can bypass Slack in local development, enforces in production/staging
+- **Channel Management**: Adds verified users to leave management channel
 
 ### Configuration
 
@@ -172,9 +222,11 @@ Add the following to your `.env` file:
 ```env
 # Slack API Configuration
 SLACK_BOT_TOKEN=xoxb-your-bot-token-here
-SLACK_API_USERID=U01234567890
 SLACK_CHANNEL_ID=C01234567890
-SLACK_HIGH_TOKEN=xoxp-your-high-privilege-token-here
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T00/B00/xxx
+
+# Local Development: Enable Slack in local environment (optional)
+ALLOW_SLACK_LOCAL=0  # Set to 1 to enable Slack API calls in local
 
 # Application Environment
 APP_ENV=local  # Options: local, staging, production

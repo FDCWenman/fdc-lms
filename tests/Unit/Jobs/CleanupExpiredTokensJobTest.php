@@ -19,21 +19,19 @@ class CleanupExpiredTokensJobTest extends TestCase
         // T085: Test expired token deletion
         $user = User::factory()->create(['status' => 2]);
 
-        // Create expired token (25 hours old)
-        $expiredToken = VerificationToken::create([
+        // Create expired token (using factory's expired state)
+        $expiredToken = VerificationToken::factory()->expired()->create([
             'user_id' => $user->id,
             'token' => 'expired_token_123',
-            'created_at' => now()->subHours(25),
         ]);
 
-        // Create recent token (23 hours old)
-        $recentToken = VerificationToken::create([
+        // Create recent token (using factory's recent state)
+        $recentToken = VerificationToken::factory()->recent()->create([
             'user_id' => $user->id,
             'token' => 'recent_token_456',
-            'created_at' => now()->subHours(23),
         ]);
 
-        $job = new CleanupExpiredTokensJob();
+        $job = new CleanupExpiredTokensJob;
         $job->handle();
 
         // Expired token should be deleted
@@ -54,25 +52,23 @@ class CleanupExpiredTokensJobTest extends TestCase
         $user1 = User::factory()->create(['status' => 2]);
         $user2 = User::factory()->create(['status' => 2]);
 
-        // Create 3 expired tokens
+        // Create 3 expired tokens using factory
         for ($i = 0; $i < 3; $i++) {
-            VerificationToken::create([
+            VerificationToken::factory()->expired()->create([
                 'user_id' => $user1->id,
-                'token' => 'expired_token_' . $i,
-                'created_at' => now()->subHours(25 + $i),
+                'token' => 'expired_token_'.$i,
             ]);
         }
 
-        // Create 2 recent tokens
+        // Create 2 recent tokens using factory
         for ($i = 0; $i < 2; $i++) {
-            VerificationToken::create([
+            VerificationToken::factory()->recent()->create([
                 'user_id' => $user2->id,
-                'token' => 'recent_token_' . $i,
-                'created_at' => now()->subHours(20 + $i),
+                'token' => 'recent_token_'.$i,
             ]);
         }
 
-        $job = new CleanupExpiredTokensJob();
+        $job = new CleanupExpiredTokensJob;
         $job->handle();
 
         // Should have deleted 3 expired, kept 2 recent
@@ -83,7 +79,7 @@ class CleanupExpiredTokensJobTest extends TestCase
     public function it_handles_empty_token_table_gracefully(): void
     {
         // T085: Test job runs without errors when no tokens exist
-        $job = new CleanupExpiredTokensJob();
+        $job = new CleanupExpiredTokensJob;
 
         try {
             $job->handle();
@@ -111,13 +107,12 @@ class CleanupExpiredTokensJobTest extends TestCase
             );
 
         $user = User::factory()->create(['status' => 2]);
-        VerificationToken::create([
+        VerificationToken::factory()->expired()->create([
             'user_id' => $user->id,
             'token' => 'expired_token',
-            'created_at' => now()->subHours(30),
         ]);
 
-        $job = new CleanupExpiredTokensJob();
+        $job = new CleanupExpiredTokensJob;
         $job->handle();
     }
 
@@ -127,21 +122,19 @@ class CleanupExpiredTokensJobTest extends TestCase
         // T085: Test precise cutoff time boundary
         $user = User::factory()->create(['status' => 2]);
 
-        // Token exactly at 24 hours (should NOT be deleted)
-        $boundaryToken = VerificationToken::create([
+        // Token exactly at 24 hours (should NOT be deleted) - about to expire
+        $boundaryToken = VerificationToken::factory()->aboutToExpire()->create([
             'user_id' => $user->id,
             'token' => 'boundary_token',
-            'created_at' => now()->subHours(24),
         ]);
 
         // Token at 24 hours + 1 minute (should be deleted)
-        $expiredToken = VerificationToken::create([
+        $expiredToken = VerificationToken::factory()->expired()->create([
             'user_id' => $user->id,
             'token' => 'expired_token',
-            'created_at' => now()->subHours(24)->subMinute(),
         ]);
 
-        $job = new CleanupExpiredTokensJob();
+        $job = new CleanupExpiredTokensJob;
         $job->handle();
 
         // Boundary token should remain (exactly 24 hours is not "older than")
@@ -164,27 +157,24 @@ class CleanupExpiredTokensJobTest extends TestCase
         $user3 = User::factory()->create(['status' => 2]);
 
         // User 1: expired token
-        VerificationToken::create([
+        VerificationToken::factory()->expired()->create([
             'user_id' => $user1->id,
             'token' => 'user1_expired',
-            'created_at' => now()->subHours(30),
         ]);
 
         // User 2: recent token
-        $user2Token = VerificationToken::create([
+        $user2Token = VerificationToken::factory()->recent()->create([
             'user_id' => $user2->id,
             'token' => 'user2_recent',
-            'created_at' => now()->subHours(12),
         ]);
 
         // User 3: recent token
-        $user3Token = VerificationToken::create([
+        $user3Token = VerificationToken::factory()->recent()->create([
             'user_id' => $user3->id,
             'token' => 'user3_recent',
-            'created_at' => now()->subHours(18),
         ]);
 
-        $job = new CleanupExpiredTokensJob();
+        $job = new CleanupExpiredTokensJob;
         $job->handle();
 
         // Only user2 and user3 tokens should remain

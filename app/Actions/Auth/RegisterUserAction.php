@@ -23,8 +23,7 @@ class RegisterUserAction
      */
     public function __construct(
         protected SlackService $slackService
-    ) {
-    }
+    ) {}
 
     /**
      * Execute the registration action.
@@ -40,7 +39,6 @@ class RegisterUserAction
      *     hired_date: string,
      *     roles: array<string>
      * }  $data
-     * @return User
      *
      * @throws \RuntimeException When Slack API validation fails in production/staging
      */
@@ -83,9 +81,9 @@ class RegisterUserAction
         $verificationUrl = route('auth.verify', ['token' => $token->token]);
 
         // Send verification DM and add to Slack channel
-        $allowSlackLocal = (bool) env('ALLOW_SLACK_LOCAL', false);
+        $allowSlackLocal = config('app.allow_slack_local', false);
         $shouldSendSlack = config('app.env') !== 'local' || $allowSlackLocal;
-        
+
         if ($shouldSendSlack) {
             $this->slackService->sendVerificationDM($data['slack_id'], $verificationUrl);
             $this->slackService->addToChannel($data['slack_id']);
@@ -104,9 +102,6 @@ class RegisterUserAction
 
     /**
      * Generate a verification token for the user.
-     *
-     * @param  User  $user
-     * @return VerificationToken
      */
     protected function generateVerificationToken(User $user): VerificationToken
     {

@@ -46,7 +46,6 @@ class Register extends Component
 
     public bool $isRegistering = false;
 
-
     /**
      * Real-time Slack ID validation
      */
@@ -107,7 +106,7 @@ class Register extends Component
             'first_name' => ['required', 'string', 'max:255'],
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'string', 'email:filter', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'slack_id' => ['required', 'string', 'max:50', 'unique:users,slack_id', 'regex:/^[UW][A-Z0-9]{8,10}$/'],
             'hired_date' => ['required', 'date', 'before_or_equal:today'],

@@ -18,6 +18,7 @@ class VerificationTokenFactory extends Factory
         return [
             'user_id' => User::factory(),
             'token' => bin2hex(random_bytes(32)),
+            'expires_at' => now()->addHours(24),
             'created_at' => now(),
         ];
     }
@@ -28,6 +29,7 @@ class VerificationTokenFactory extends Factory
     public function expired(): static
     {
         return $this->state(fn (array $attributes) => [
+            'expires_at' => now()->subHours(1),
             'created_at' => now()->subHours(25),
         ]);
     }
@@ -38,6 +40,7 @@ class VerificationTokenFactory extends Factory
     public function recent(): static
     {
         return $this->state(fn (array $attributes) => [
+            'expires_at' => now()->addHours(12),
             'created_at' => now()->subHours(12),
         ]);
     }
@@ -48,6 +51,7 @@ class VerificationTokenFactory extends Factory
     public function aboutToExpire(): static
     {
         return $this->state(fn (array $attributes) => [
+            'expires_at' => now()->addMinutes(5),
             'created_at' => now()->subHours(23)->subMinutes(55),
         ]);
     }

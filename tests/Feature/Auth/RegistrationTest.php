@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Livewire\Auth\Register;
 use App\Models\User;
-use App\Models\VerificationToken;
 use App\Services\SlackService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -17,7 +16,7 @@ class RegistrationTest extends TestCase
 
     protected function setUp(): void
     {
-        parent->setUp();
+        parent::setUp();
 
         // Seed roles
         $this->artisan('db:seed', ['--class' => 'RoleSeeder']);
@@ -29,24 +28,20 @@ class RegistrationTest extends TestCase
     /** @test */
     public function successful_registration_creates_user_with_for_verification_status(): void
     {
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'John Doe')
+            ->set('first_name', 'John')
+            ->set('middle_name', 'M')
+            ->set('last_name', 'Doe')
             ->set('email', 'john.doe@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U123456789')
-            ->set('roles', ['employee'])
+            ->set('hired_date', '2025-01-15')
             ->call('register')
             ->assertHasNoErrors();
 
-        $this->assertDatabaseHas('users_fdc_leaves', [
-            'name' => 'John Doe',
+        $this->assertDatabaseHas('users', [
+            'name' => 'John M Doe',
             'email' => 'john.doe@example.com',
             'slack_id' => 'U123456789',
             'status' => 2, // for_verification
@@ -68,19 +63,15 @@ class RegistrationTest extends TestCase
         // Create existing user
         User::factory()->create(['email' => 'existing@example.com']);
 
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'Duplicate Email')
+            ->set('first_name', 'Duplicate')
+            ->set('middle_name', '')
+            ->set('last_name', 'Email')
             ->set('email', 'existing@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U999999999')
-            ->set('roles', ['employee'])
+            ->set('hired_date', '2025-02-01')
             ->call('register')
             ->assertHasErrors(['email']);
 
@@ -93,19 +84,15 @@ class RegistrationTest extends TestCase
         // Create existing user with Slack ID
         User::factory()->create(['slack_id' => 'U111111111']);
 
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'Duplicate Slack')
+            ->set('first_name', 'Duplicate')
+            ->set('middle_name', '')
+            ->set('last_name', 'Slack')
             ->set('email', 'duplicate.slack@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U111111111')
-            ->set('roles', ['employee'])
+            ->set('hired_date', '2025-03-01')
             ->call('register')
             ->assertHasErrors(['slack_id']);
 
@@ -115,19 +102,15 @@ class RegistrationTest extends TestCase
     /** @test */
     public function invalid_slack_id_format_is_rejected(): void
     {
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'Invalid Slack Format')
+            ->set('first_name', 'Invalid')
+            ->set('middle_name', 'Slack')
+            ->set('last_name', 'Format')
             ->set('email', 'invalid.slack@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'INVALID')
-            ->set('roles', ['employee'])
+            ->set('hired_date', '2025-01-20')
             ->call('register')
             ->assertHasErrors(['slack_id']);
     }
@@ -145,24 +128,20 @@ class RegistrationTest extends TestCase
 
         $this->app->instance(SlackService::class, $slackService);
 
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'Slack API Error')
+            ->set('first_name', 'Slack')
+            ->set('middle_name', 'API')
+            ->set('last_name', 'Error')
             ->set('email', 'slack.error@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U222222222')
-            ->set('roles', ['employee'])
+            ->set('hired_date', '2025-01-10')
             ->call('register')
             ->assertHasErrors(['slack_id']);
 
         // User should not be created
-        $this->assertDatabaseMissing('users_fdc_leaves', [
+        $this->assertDatabaseMissing('users', [
             'email' => 'slack.error@example.com',
         ]);
     }
@@ -172,24 +151,20 @@ class RegistrationTest extends TestCase
     {
         config(['app.env' => 'local']);
 
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         // Use any Slack ID format - should work in local
         Livewire::test(Register::class)
-            ->set('name', 'Local Bypass')
+            ->set('first_name', 'Local')
+            ->set('middle_name', '')
+            ->set('last_name', 'Bypass')
             ->set('email', 'local@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U888888888')
-            ->set('roles', ['employee'])
+            ->set('hired_date', '2024-12-15')
             ->call('register')
             ->assertHasNoErrors();
 
-        $this->assertDatabaseHas('users_fdc_leaves', [
+        $this->assertDatabaseHas('users', [
             'email' => 'local@example.com',
             'slack_id' => 'U888888888',
             'status' => 2,
@@ -197,9 +172,9 @@ class RegistrationTest extends TestCase
     }
 
     /** @test */
-    public function non_hr_user_is_blocked_from_registration(): void
+    public function authenticated_user_redirected_from_registration(): void
     {
-        // Create employee user (not HR)
+        // Create employee user
         $employee = User::factory()->create(['status' => 1, 'verified_at' => now()]);
         $employee->assignRole('employee');
 
@@ -207,31 +182,27 @@ class RegistrationTest extends TestCase
 
         $response = $this->get(route('register'));
 
-        $response->assertStatus(403);
+        // Authenticated users should be redirected to leaves page
+        $response->assertRedirect('/leaves');
     }
 
     /** @test */
-    public function registration_assigns_multiple_roles(): void
+    public function registration_assigns_employee_role_automatically(): void
     {
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'Multi Role User')
-            ->set('email', 'multirole@example.com')
+            ->set('first_name', 'Auto')
+            ->set('middle_name', 'Role')
+            ->set('last_name', 'User')
+            ->set('email', 'autorole@example.com')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U777777777')
-            ->set('roles', ['employee', 'team-lead'])
+            ->set('hired_date', '2025-01-01')
             ->call('register')
             ->assertHasNoErrors();
 
-        $user = User::where('email', 'multirole@example.com')->first();
+        $user = User::where('email', 'autorole@example.com')->first();
         $this->assertTrue($user->hasRole('employee'));
-        $this->assertTrue($user->hasRole('team-lead'));
     }
 
     /** @test */
@@ -242,30 +213,21 @@ class RegistrationTest extends TestCase
         $tlApprover = User::factory()->create(['status' => 1, 'verified_at' => now()]);
         $pmApprover = User::factory()->create(['status' => 1, 'verified_at' => now()]);
 
-        // Create HR admin
-        $hrAdmin = User::factory()->create(['status' => 1, 'verified_at' => now()]);
-        $hrAdmin->assignRole('hr');
-
-        $this->actingAs($hrAdmin);
-
         Livewire::test(Register::class)
-            ->set('name', 'Employee With Approvers')
-            ->set('email', 'approvers@example.com')
+            ->set('first_name', 'Employee')
+            ->set('middle_name', 'With')
+            ->set('last_name', 'Approvers')
+            ->set('email', 'approvers@example.org')
             ->set('password', 'Test@12345')
             ->set('password_confirmation', 'Test@12345')
             ->set('slack_id', 'U666666666')
-            ->set('roles', ['employee'])
-            ->set('hr_approver_id', $hrApprover->id)
-            ->set('tl_approver_id', $tlApprover->id)
-            ->set('pm_approver_id', $pmApprover->id)
+            ->set('hired_date', '2024-11-01')
             ->call('register')
             ->assertHasNoErrors();
 
-        $user = User::where('email', 'approvers@example.com')->first();
-        $this->assertEquals([
-            'hr_id' => $hrApprover->id,
-            'tl_id' => $tlApprover->id,
-            'pm_id' => $pmApprover->id,
-        ], $user->default_approvers);
+        $user = User::where('email', 'approvers@example.org')->first();
+        $this->assertNotNull($user);
+        $this->assertEquals('Employee With Approvers', $user->name);
+        $this->assertEquals(2, $user->status); // for_verification
     }
 }
