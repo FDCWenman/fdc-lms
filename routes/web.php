@@ -6,9 +6,10 @@ use App\Livewire\Auth\Register;
 use App\Livewire\Auth\RequestNewVerification;
 use Illuminate\Support\Facades\Route;
 
-// Guest routes (login)
+// Guest routes (login & registration)
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
+    Route::get('/register', Register::class)->name('register');
 
     // Verification routes
     Route::get('/auth/verify', [VerificationController::class, 'verify'])->name('auth.verify');
@@ -33,11 +34,6 @@ Route::middleware(['auth', 'user.active'])->group(function () {
     // Approver portal (requires hr, team-lead, or project-manager role)
     Route::middleware(['role:hr|team-lead|project-manager'])->group(function () {
         Route::view('/portal', 'pages.portal')->name('portal');
-    });
-
-    // HR Admin routes (requires 'hr' role)
-    Route::middleware(['role:hr'])->group(function () {
-        Route::get('/auth/register', Register::class)->name('register');
     });
 
     // Fallback dashboard

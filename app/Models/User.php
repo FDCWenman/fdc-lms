@@ -23,9 +23,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'middle_name',
+        'last_name',
         'email',
         'password',
         'slack_id',
+        'hired_date',
         'status',
         'verified_at',
         'default_approvers',
@@ -53,6 +57,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'verified_at' => 'datetime',
+            'hired_date' => 'date',
             'password' => 'hashed',
             'default_approvers' => 'array',
         ];

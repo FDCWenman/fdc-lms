@@ -30,21 +30,22 @@ class RegisterUserAction
      * Execute the registration action.
      *
      * @param  array{
+     *     first_name: string,
+     *     middle_name: ?string,
+     *     last_name: string,
      *     name: string,
      *     email: string,
-     *     password: string,
      *     slack_id: string,
-     *     roles: array<string>,
-     *     default_approvers: array{hr_id?: int, tl_id?: int, pm_id?: int}
+     *     hired_date: string,
+     *     roles: array<string>
      * }  $data
      * @return User
      *
      * @throws \RuntimeException When Slack API validation fails in production/staging
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException When role doesn't exist
      */
     public function execute(array $data): User
     {
-        // Validate Slack ID via API (environment-aware: FR-011, FR-035)
+        // Validate Slack ID via API (environment-aware)
         if (config('app.env') !== 'local') {
             $isValid = $this->slackService->validateSlackId($data['slack_id']);
             if (! $isValid) {
@@ -52,23 +53,29 @@ class RegisterUserAction
             }
         }
 
-        // Check for duplicate Slack ID (FR-038)
+        // Check for duplicate Slack ID
         if (User::where('slack_id', $data['slack_id'])->exists()) {
             throw new \RuntimeException('Slack ID already exists in system');
         }
 
-        // Create user with "for_verification" status (FR-014)
+        // Generate random password for user
+        $randomPassword = Str::random(16);
+
+        // Create user with "for_verification" status
         $user = User::create([
+            'first_name' => $data['first_name'],
+            'middle_name' => $data['middle_name'] ?? null,
+            'last_name' => $data['last_name'],
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']), // FR-002
+            'password' => Hash::make($randomPassword),
             'slack_id' => $data['slack_id'],
+            'hired_date' => $data['hired_date'],
             'status' => 2, // for_verification
             'verified_at' => null,
-            'default_approvers' => $data['default_approvers'], // FR-016
         ]);
 
-        // Assign roles using Spatie (FR-015)
+        // Assign roles using Spatie
         if (isset($data['roles']) && is_array($data['roles'])) {
             $user->assignRole($data['roles']);
         }
@@ -76,7 +83,7 @@ class RegisterUserAction
         // Generate verification token
         $token = $this->generateVerificationToken($user);
 
-        // Send verification DM and add to Slack channel (FR-017, FR-018)
+        // Send verification DM and add to Slack channel
         if (config('app.env') !== 'local') {
             $verificationUrl = route('auth.verify', ['token' => $token->token]);
             $this->slackService->sendVerificationDM($data['slack_id'], $verificationUrl);
