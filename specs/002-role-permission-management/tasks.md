@@ -197,23 +197,23 @@
 
 **Independent Test**: Perform role action, verify audit log entry created and visible
 
-- [ ] T102 Write feature test: can view audit logs in tests/Feature/RoleAuditTest.php
-- [ ] T103 Write feature test: audit logs are paginated in tests/Feature/RoleAuditTest.php
-- [ ] T104 Write feature test: can filter by action type in tests/Feature/RoleAuditTest.php
-- [ ] T105 Write feature test: can filter by user in tests/Feature/RoleAuditTest.php
-- [ ] T106 Write feature test: can filter by date range in tests/Feature/RoleAuditTest.php
-- [ ] T107 Run tests (should fail): php artisan test --filter=RoleAudit
-- [ ] T108 [P] Create ViewAuditLogs Livewire component in app/Http/Livewire/Roles/ViewAuditLogs.php
-- [ ] T109 [P] Create view-audit-logs Blade view in resources/views/livewire/roles/view-audit-logs.blade.php
-- [ ] T110 Implement audit log listing with pagination (50 per page)
-- [ ] T111 Add filter by action type (created, updated, deleted, permission_assigned, etc.)
-- [ ] T112 Add filter by user dropdown
-- [ ] T113 Add date range filter (from/to)
-- [ ] T114 Display old_values and new_values in readable format
-- [ ] T115 Add permission check: view_audit_logs
-- [ ] T116 Run tests (should pass): php artisan test --filter=RoleAudit
-- [ ] T117 Test manually: View audit logs, apply filters, verify pagination
-- [ ] T118 Run Pint: vendor/bin/pint app/Http/Livewire/Roles/ViewAuditLogs.php
+- [X] T102 Write feature test: can view audit logs in tests/Feature/RoleAuditTest.php
+- [X] T103 Write feature test: audit logs are paginated in tests/Feature/RoleAuditTest.php
+- [X] T104 Write feature test: can filter by action type in tests/Feature/RoleAuditTest.php
+- [X] T105 Write feature test: can filter by user in tests/Feature/RoleAuditTest.php
+- [X] T106 Write feature test: can filter by date range in tests/Feature/RoleAuditTest.php
+- [X] T107 Run tests (should fail): php artisan test --filter=RoleAudit
+- [X] T108 [P] Create ViewAuditLogs Livewire component in app/Http/Livewire/Roles/ViewAuditLogs.php
+- [X] T109 [P] Create view-audit-logs Blade view in resources/views/livewire/roles/view-audit-logs.blade.php
+- [X] T110 Implement audit log listing with pagination (50 per page)
+- [X] T111 Add filter by action type (created, updated, deleted, permission_assigned, etc.)
+- [X] T112 Add filter by user dropdown
+- [X] T113 Add date range filter (from/to)
+- [X] T114 Display old_values and new_values in readable format
+- [X] T115 Add permission check: view_audit_logs
+- [X] T116 Run tests (should pass): php artisan test --filter=RoleAudit
+- [X] T117 Test manually: View audit logs, apply filters, verify pagination
+- [X] T118 Run Pint: vendor/bin/pint app/Http/Livewire/Roles/ViewAuditLogs.php
 
 **Deliverable**: Filterable, paginated audit log viewer
 
