@@ -12,8 +12,8 @@ erDiagram
     roles ||--o{ model_has_roles : "assigned to many"
     roles ||--o{ role_has_permissions : "has many"
     permissions ||--o{ role_has_permissions : "granted to many"
-    users ||--o{ role_audit_logs : "performs"
-    roles ||--o{ role_audit_logs : "audited"
+    users ||--o{ activity_log : "performs"
+    roles ||--o{ activity_log : "audited"
     
     users {
         bigint id PK
@@ -56,15 +56,17 @@ erDiagram
         bigint role_id FK
     }
     
-    role_audit_logs {
+    activity_log {
         bigint id PK
-        string action "created, updated, deleted, permission_assigned, etc"
-        string auditable_type "Role, Permission, User"
-        bigint auditable_id
-        bigint user_id FK
-        json old_values "nullable"
-        json new_values "nullable"
-        text description "nullable"
+        string log_name "nullable, for categorization"
+        string description "created, updated, deleted, etc"
+        bigint subject_id "nullable"
+        string subject_type "nullable, Role or User"
+        string event "nullable"
+        bigint causer_id "nullable"
+        string causer_type "nullable, User"
+        json properties "nullable, old/new values"
+        string batch_uuid "nullable"
         timestamp created_at
         timestamp updated_at
     }
@@ -153,37 +155,40 @@ erDiagram
 - Unique compound index on (`name`, `guard_name`) (provided by spatie)
 - Index on `category` for filtering
 
-### RoleAuditLog (New)
+### Activity (Spatie Package)
 **Purpose**: Immutable audit trail of all role and permission changes
 
 **Attributes**:
 - `id` (bigint, PK): Unique identifier
-- `action` (string): Type of action performed (created, updated, deleted, permission_assigned, permission_removed, user_assigned, user_removed)
-- `auditable_type` (string): Type of entity being audited (Role, Permission, User)
-- `auditable_id` (bigint): ID of the audited entity
-- `user_id` (bigint, FK): ID of user who performed the action
-- `old_values` (json, nullable): Previous state before change
-- `new_values` (json, nullable): New state after change
-- `description` (text, nullable): Human-readable description of the change
+- `log_name` (string, nullable): Optional categorization (e.g., 'role_management')
+- `description` (string): Action performed (created, updated, deleted, permissions_assigned, roles_assigned)
+- `subject_id` (bigint, nullable): ID of the entity being logged (role or user)
+- `subject_type` (string, nullable): Type of entity (Spatie\Permission\Models\Role, App\Models\User)
+- `event` (string, nullable): Model event that triggered log (if using automatic logging)
+- `causer_id` (bigint, nullable): ID of user who performed the action
+- `causer_type` (string, nullable): Type of causer (App\Models\User)
+- `properties` (json, nullable): Contains old/new values and custom properties
+- `batch_uuid` (string, nullable): For grouping related activities
 - `created_at` (timestamp): When action occurred
-- `updated_at` (timestamp): Not used (audit logs are immutable)
+- `updated_at` (timestamp): Not typically used (logs are immutable)
 
 **Relationships**:
-- Belongs to User (one-to-many)
-- Belongs to auditable entity (polymorphic many-to-one)
+- Morphs to causer (User)
+- Morphs to subject (Role, User, Permission)
 
 **Business Rules**:
-- Records are immutable (no updates or deletes)
-- Every role/permission change must create an audit log
+- Records are immutable (no updates or deletes recommended)
+- Every role/permission change should create an activity log
 - Audit logs must be retained for minimum 7 years (per constitution)
-- User who performed action must be recorded
-- Description should be human-readable for audit reports
+- User who performed action must be recorded via causer
+- Properties JSON contains old/new values for change tracking
 
-**Indexes**:
+**Indexes** (provided by spatie migration):
 - Primary key on `id`
-- Compound index on (`auditable_type`, `auditable_id`) for entity lookups
-- Index on `created_at` for chronological queries
-- Index on `user_id` for user activity reports
+- Index on `subject_type` and `subject_id`
+- Index on `causer_type` and `causer_id`
+- Index on `log_name`
+- Index on `created_at`
 
 ## Many-to-Many Relationships
 

@@ -192,158 +192,157 @@ public function rules(): array
 ## 4. Audit Trail Implementation
 
 ### Decision
-Implement a **custom audit logging solution** for role management activities.
+Implement audit logging using **spatie/laravel-activitylog v4** package.
 
 ### Rationale
-1. **Lightweight**: Don't need full spatie/laravel-activitylog package overhead for this single feature
-2. **Specific Requirements**: Spec requires audit for role changes only, not system-wide activity logging
-3. **Control**: Custom solution provides exact data structure needed
-4. **Performance**: Avoids polymorphic relationship complexity of activitylog package
-5. **Future Flexibility**: Can expand to spatie/laravel-activitylog later if audit requirements grow
+1. **Battle-Tested**: Industry-standard package with 43M+ downloads and active maintenance
+2. **Feature-Rich**: Automatic model event logging, property changes tracking, batch logs support
+3. **Future-Proof**: Can expand to system-wide activity logging as requirements grow
+4. **Well-Documented**: Comprehensive documentation and community support
+5. **Laravel Integration**: Seamless integration with Eloquent models using traits
+6. **Flexible**: Supports custom properties, causers, subjects, and log descriptions
+
+### Package Information
+- **Package**: spatie/laravel-activitylog
+- **Version**: ^4.0
+- **Documentation**: https://spatie.be/docs/laravel-activitylog/v4/introduction
+- **Repository**: https://github.com/spatie/laravel-activitylog
 
 ### Code Pattern
 
-#### Migration
-```php
-// database/migrations/2026_03_06_XXXXXX_create_role_audit_logs_table.php
-<?php
-
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-return new class extends Migration
-{
-    public function up(): void
-    {
-        Schema::create('role_audit_logs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('action'); // created, updated, deleted, permission_assigned, permission_removed, role_assigned, role_removed
-            $table->string('auditable_type'); // Role, User
-            $table->unsignedBigInteger('auditable_id');
-            $table->json('old_values')->nullable();
-            $table->json('new_values')->nullable();
-            $table->text('description')->nullable();
-            $table->timestamps();
-            
-            $table->index(['auditable_type', 'auditable_id']);
-            $table->index('created_at');
-        });
-    }
-
-    public function down(): void
-    {
-        Schema::dropIfExists('role_audit_logs');
-    }
-};
+#### Installation
+```bash
+composer require spatie/laravel-activitylog
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-migrations"
+php artisan migrate
+php artisan vendor:publish --provider="Spatie\Activitylog\ActivitylogServiceProvider" --tag="activitylog-config"
 ```
 
-#### Model
+#### Basic Usage - Manual Logging
 ```php
-// app/Models/RoleAuditLog.php
-<?php
+// Log a simple activity
+activity()->log('Role created');
 
-namespace App\Models;
+// Log with subject and causer
+activity()
+    ->performedOn($role)
+    ->causedBy(auth()->user())
+    ->log('created');
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+// Log with properties (old/new values)
+activity()
+    ->performedOn($role)
+    ->causedBy(auth()->user())
+    ->withProperties([
+        'old' => ['name' => 'Old Name'],
+        'attributes' => ['name' => 'New Name']
+    ])
+    ->log('updated');
+```
 
-class RoleAuditLog extends Model
+#### Automatic Model Event Logging
+```php
+// Add trait to Role model or create custom Role model extending Spatie's
+// If using custom model:
+// app/Models/Role.php
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
+class Role extends \Spatie\Permission\Models\Role
 {
-    protected $fillable = [
-        'user_id',
-        'action',
-        'auditable_type',
-        'auditable_id',
-        'old_values',
-        'new_values',
-        'description',
-    ];
+    use LogsActivity;
 
-    protected function casts(): array
+    public function getActivitylogOptions(): LogOptions
     {
-        return [
-            'old_values' => 'array',
-            'new_values' => 'array',
-        ];
-    }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
+        return LogOptions::defaults()
+            ->logOnly(['name', 'description', 'is_protected'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
+
+// Now all role changes are automatically logged
+$role = Role::create(['name' => 'Team Lead']);
+// Automatically creates activity log with 'created' description
+
+$role->name = 'Senior Team Lead';
+$role->save();
+// Automatically creates activity log with 'updated' description and changes
 ```
 
-#### Service for Logging
+#### Permission Assignment Logging
 ```php
-// app/Services/RoleAuditService.php
-<?php
-
-namespace App\Services;
-
-use App\Models\RoleAuditLog;
-use Illuminate\Support\Facades\Auth;
-
-class RoleAuditService
-{
-    public static function log(
-        string $action,
-        string $auditableType,
-        int $auditableId,
-        ?array $oldValues = null,
-        ?array $newValues = null,
-        ?string $description = null
-    ): void {
-        RoleAuditLog::create([
-            'user_id' => Auth::id(),
-            'action' => $action,
-            'auditable_type' => $auditableType,
-            'auditable_id' => $auditableId,
-            'old_values' => $oldValues,
-            'new_values' => $newValues,
-            'description' => $description,
-        ]);
-    }
-}
-```
-
-#### Usage Example
-```php
-// In RoleController or Livewire component
-use App\Services\RoleAuditService;
+// In Livewire component or controller
 use Spatie\Permission\Models\Role;
 
-// After creating a role
-$role = Role::create(['name' => $request->name, 'guard_name' => 'web']);
-RoleAuditService::log(
-    action: 'created',
-    auditableType: 'Role',
-    auditableId: $role->id,
-    newValues: $role->toArray(),
-    description: "Created role: {$role->name}"
-);
+// When assigning permissions
+$role = Role::findOrFail($roleId);
+$oldPermissions = $role->permissions->pluck('name')->toArray();
 
-// After assigning permission
-$role->givePermissionTo($permission);
-RoleAuditService::log(
-    action: 'permission_assigned',
-    auditableType: 'Role',
-    auditableId: $role->id,
-    newValues: ['permission' => $permission->name],
-    description: "Assigned permission '{$permission->name}' to role '{$role->name}'"
-);
+$role->syncPermissions($permissionIds);
+
+activity()
+    ->performedOn($role)
+    ->causedBy(auth()->user())
+    ->withProperties([
+        'old' => ['permissions' => $oldPermissions],
+        'attributes' => ['permissions' => $role->permissions->pluck('name')->toArray()]
+    ])
+    ->log('permissions_assigned');
 ```
 
-### Audit Actions to Log
-- `created` - Role created
-- `updated` - Role name/description updated
-- `deleted` - Role deleted
-- `permission_assigned` - Permission added to role
-- `permission_removed` - Permission removed from role
-- `role_assigned` - Role assigned to user
-- `role_removed` - Role removed from user
+#### User Role Assignment Logging
+```php
+// When assigning roles to users
+use App\Models\User;
+
+$user = User::findOrFail($userId);
+$oldRoles = $user->roles->pluck('name')->toArray();
+
+$user->syncRoles($roleIds);
+
+activity()
+    ->performedOn($user)
+    ->causedBy(auth()->user())
+    ->withProperties([
+        'old' => ['roles' => $oldRoles],
+        'attributes' => ['roles' => $user->roles->pluck('name')->toArray()]
+    ])
+    ->log('roles_assigned');
+```
+
+#### Retrieving Activity Logs
+```php
+// Get all activity logs
+use Spatie\Activitylog\Models\Activity;
+
+$activities = Activity::all();
+
+// Get logs for specific model
+$roleActivities = Activity::forSubject($role)->get();
+
+// Get logs by specific user
+$userActivities = Activity::causedBy(auth()->user())->get();
+
+// Get recent logs with pagination
+$recentActivities = Activity::latest()->paginate(50);
+
+// Access log properties
+foreach ($activities as $activity) {
+    $activity->description;  // 'created', 'updated', 'permissions_assigned'
+    $activity->subject;      // The role/user instance
+    $activity->causer;       // The user who performed the action
+    $activity->changes();    // Array of old/new values
+    $activity->getExtraProperty('key'); // Custom properties
+}
+```
+
+### Activity Log Descriptions
+- `created` - Role/User created
+- `updated` - Role/User name/description updated
+- `deleted` - Role/User deleted
+- `permissions_assigned` - Permissions modified on role
+- `roles_assigned` - Roles modified on user
 
 ---
 

@@ -5,7 +5,7 @@
 
 ## Summary
 
-Implement role-based access control (RBAC) system allowing administrators to create roles, assign system-defined permissions to roles, and assign roles to users. Uses existing spatie/laravel-permission package with custom extensions for role descriptions, audit logging, and protected role management. System permissions are predefined/seeded by developers; administrators can only view and assign them. All role management activities are logged to an immutable audit trail.
+Implement role-based access control (RBAC) system allowing administrators to create roles, assign system-defined permissions to roles, and assign roles to users. Uses existing spatie/laravel-permission package with custom extensions for role descriptions and protected role management. Uses spatie/laravel-activitylog for comprehensive audit trail. System permissions are predefined/seeded by developers; administrators can only view and assign them. All role management activities are logged to an immutable audit trail.
 
 ## Technical Context
 
@@ -13,6 +13,7 @@ Implement role-based access control (RBAC) system allowing administrators to cre
 **Framework**: Laravel 12  
 **Primary Dependencies**: 
 - spatie/laravel-permission ^7.2 (already installed)
+- spatie/laravel-activitylog ^4.0 (to be installed)
 - livewire/livewire ^4.0 (already installed)
 - livewire/flux ^2.9.0 (already installed)
 
@@ -36,8 +37,8 @@ Implement role-based access control (RBAC) system allowing administrators to cre
 **Scale/Scope**: 
 - 6 user stories (4 P1, 1 P2, 1 P3)
 - 6 Livewire components
-- 1 service class (audit)
-- 3 new migrations
+- 2 spatie packages (permission, activitylog)
+- 2 new migrations (roles/permissions extensions)
 - 2 seeders
 - ~20 feature tests minimum
 
@@ -56,10 +57,10 @@ Implement role-based access control (RBAC) system allowing administrators to cre
 ### ✅ II. Data Consistency & Audit Trail
 **Status**: COMPLIANT  
 **Verification**:
-- Custom `RoleAuditService` logs all role/permission changes
-- Audit logs record: Who (user_id), What (action), When (timestamp), Why (description)
+- spatie/laravel-activitylog package logs all role/permission changes
+- Activity logs record: Who (causer), What (description), When (created_at), Subject (role/user)
 - Audit logs immutable (no updates/deletes)
-- Stores old_values and new_values as JSON for change tracking
+- Stores old/new values in properties JSON for change tracking
 
 ### ✅ V. Test-First Development (NON-NEGOTIABLE)
 **Status**: COMPLIANT  
@@ -134,19 +135,14 @@ app/
 │   │   └── AssignPermissionsRequest.php # Validation for permission assignment
 │   └── Middleware/                   # (existing middleware)
 ├── Models/
-│   ├── User.php                      # (existing, has HasRoles trait)
-│   └── RoleAuditLog.php              # NEW: Audit log model
-├── Services/
-│   └── RoleAuditService.php          # NEW: Centralized audit logging
+│   └── User.php                      # (existing, has HasRoles trait)
 └── Providers/                        # (existing providers)
 
 database/
-├── factories/
-│   └── RoleAuditLogFactory.php       # NEW: Factory for testing
 ├── migrations/
 │   ├── YYYY_MM_DD_add_columns_to_permissions_table.php  # NEW
 │   ├── YYYY_MM_DD_add_columns_to_roles_table.php        # NEW
-│   └── YYYY_MM_DD_create_role_audit_logs_table.php      # NEW
+│   └── YYYY_MM_DD_create_activity_log_table.php         # From spatie/activitylog
 └── seeders/
     ├── PermissionSeeder.php          # NEW: Seed all system permissions
     └── RoleSeeder.php                # NEW: Create Administrator role
@@ -172,18 +168,19 @@ tests/
 │   ├── RoleAssignmentTest.php        # NEW: User role tests
 │   └── RoleAuditTest.php             # NEW: Audit logging tests
 └── Unit/
-    └── RoleAuditServiceTest.php      # NEW: Service unit tests
+    # No custom unit tests needed - using spatie packages
 
 config/
-└── permission.php                    # (existing spatie config)
+├── permission.php                    # (existing spatie permission config)
+└── activitylog.php                   # (spatie activitylog config, to be published)
 ```
 
 **Structure Decision**: Laravel 12 web application structure using Livewire for interactive UI. Following existing project conventions:
 - Livewire components in `app/Http/Livewire/Roles/` namespace
 - Form requests for validation
-- Services directory for business logic
+- No custom services directory needed (using spatie/activitylog package)
 - Standard Laravel test organization
-- Spatie permission package provides Role and Permission models (no need to create custom models)
+- Spatie packages provide Role, Permission, and Activity models (no need to create custom models)
 
 ## Complexity Tracking
 
@@ -200,7 +197,7 @@ All constitutional requirements are met without introducing unnecessary complexi
 ### Phase 0: Research ✅ COMPLETE
 - [x] Research spatie/laravel-permission v7.2 best practices
 - [x] Determine permission seeding strategy
-- [x] Design audit trail approach
+- [x] Design audit trail approach using spatie/laravel-activitylog v4
 - [x] Define validation patterns
 - [x] Document permission checking layers
 - [x] Output: [research.md](./research.md)

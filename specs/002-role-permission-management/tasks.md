@@ -15,23 +15,21 @@
 
 ## Phase 1: Setup (Shared Infrastructure)
 
-**Purpose**: Foundation setup - migrations, seeders, core models that all user stories depend on
+**Purpose**: Foundation setup - migrations, seeders, packages that all user stories depend on
 
 - [ ] T001 Review .env configuration for database and Docker settings
 - [ ] T002 Verify spatie/laravel-permission package is installed and configured in config/permission.php
-- [ ] T003 [P] Create migration to add category and description columns to permissions table in database/migrations/YYYY_MM_DD_add_columns_to_permissions_table.php
-- [ ] T004 [P] Create migration to add description and is_protected columns to roles table in database/migrations/YYYY_MM_DD_add_columns_to_roles_table.php
-- [ ] T005 Create migration for role_audit_logs table in database/migrations/YYYY_MM_DD_create_role_audit_logs_table.php
-- [ ] T006 Create RoleAuditLog model in app/Models/RoleAuditLog.php
-- [ ] T007 Create RoleAuditLog factory in database/factories/RoleAuditLogFactory.php
+- [ ] T003 Install spatie/laravel-activitylog: composer require spatie/laravel-activitylog
+- [ ] T004 Publish activitylog migration: php artisan vendor:publish --provider="Spatie\\Activitylog\\ActivitylogServiceProvider" --tag="activitylog-migrations"
+- [ ] T005 Publish activitylog config: php artisan vendor:publish --provider="Spatie\\Activitylog\\ActivitylogServiceProvider" --tag="activitylog-config"
+- [ ] T006 [P] Create migration to add category and description columns to permissions table in database/migrations/YYYY_MM_DD_add_columns_to_permissions_table.php
+- [ ] T007 [P] Create migration to add description and is_protected columns to roles table in database/migrations/YYYY_MM_DD_add_columns_to_roles_table.php
 - [ ] T008 Run all migrations: php artisan migrate
 - [ ] T009 Create PermissionSeeder with all system permissions in database/seeders/PermissionSeeder.php
 - [ ] T010 Create RoleSeeder to create Administrator role in database/seeders/RoleSeeder.php
 - [ ] T011 Run seeders: php artisan db:seed --class=PermissionSeeder && php artisan db:seed --class=RoleSeeder
 - [ ] T012 Assign Administrator role to initial admin user via tinker or seeder
-- [ ] T013 Create RoleAuditService in app/Services/RoleAuditService.php
-- [ ] T014 Write unit tests for RoleAuditService in tests/Unit/RoleAuditServiceTest.php
-- [ ] T015 Run setup tests: php artisan test --filter=RoleAuditService
+- [ ] T013 Create route group with auth and permission middleware in routes/web.php
 
 ---
 
@@ -39,8 +37,7 @@
 
 **Purpose**: Core features that multiple user stories depend on
 
-- [ ] T016 Create role management route group with auth and permission middleware in routes/web.php
-- [ ] T017 Create base role management layout view in resources/views/livewire/roles/layout.blade.php (if needed)
+- [ ] T014 Create base role management layout view in resources/views/livewire/roles/layout.blade.php (if needed)
 
 ---
 
@@ -50,24 +47,24 @@
 
 **Independent Test**: Create a role, verify it's saved, list roles, confirm it appears
 
-- [ ] T018 [US1] Write feature test: administrator can view roles list in tests/Feature/RoleManagementTest.php
-- [ ] T019 [US1] Write feature test: administrator can create role with valid name in tests/Feature/RoleManagementTest.php
-- [ ] T020 [US1] Write feature test: role name validation (required, max 50, regex) in tests/Feature/RoleManagementTest.php
-- [ ] T021 [US1] Write feature test: role name must be unique in tests/Feature/RoleManagementTest.php
-- [ ] T022 [US1] Write feature test: description validation (optional, max 500) in tests/Feature/RoleManagementTest.php
-- [ ] T023 [US1] Run tests (should fail): php artisan test --filter=RoleManagement
-- [ ] T024 [US1] Create ManageRoles Livewire component in app/Http/Livewire/Roles/ManageRoles.php
-- [ ] T025 [US1] Create manage-roles Blade view with roles list in resources/views/livewire/roles/manage-roles.blade.php
-- [ ] T026 [US1] Create CreateRole Livewire component in app/Http/Livewire/Roles/CreateRole.php
-- [ ] T027 [US1] Create create-role Blade view with form in resources/views/livewire/roles/create-role.blade.php
-- [ ] T028 [US1] Create StoreRoleRequest with validation rules in app/Http/Requests/StoreRoleRequest.php
-- [ ] T029 [US1] Implement role creation logic with audit logging in CreateRole component
-- [ ] T030 [US1] Add role count display to roles list
-- [ ] T031 [US1] Run tests (should pass): php artisan test --filter=RoleManagement
-- [ ] T032 [US1] Test manually: Create role through UI, verify in database
-- [ ] T033 [US1] Run Pint for code style: vendor/bin/pint app/Http/Livewire/Roles app/Http/Requests
+- [ ] T015 [US1] Write feature test: administrator can view roles list in tests/Feature/RoleManagementTest.php
+- [ ] T016 [US1] Write feature test: administrator can create role with valid name in tests/Feature/RoleManagementTest.php
+- [ ] T017 [US1] Write feature test: role name validation (required, max 50, regex) in tests/Feature/RoleManagementTest.php
+- [ ] T018 [US1] Write feature test: role name must be unique in tests/Feature/RoleManagementTest.php
+- [ ] T019 [US1] Write feature test: description validation (optional, max 500) in tests/Feature/RoleManagementTest.php
+- [ ] T020 [US1] Run tests (should fail): php artisan test --filter=RoleManagement
+- [ ] T021 [US1] Create ManageRoles Livewire component in app/Http/Livewire/Roles/ManageRoles.php
+- [ ] T022 [US1] Create manage-roles Blade view with roles list in resources/views/livewire/roles/manage-roles.blade.php
+- [ ] T023 [US1] Create CreateRole Livewire component in app/Http/Livewire/Roles/CreateRole.php
+- [ ] T024 [US1] Create create-role Blade view with form in resources/views/livewire/roles/create-role.blade.php
+- [ ] T025 [US1] Create StoreRoleRequest with validation rules in app/Http/Requests/StoreRoleRequest.php
+- [ ] T026 [US1] Implement role creation logic with activity logging using spatie/activitylog in CreateRole component
+- [ ] T027 [US1] Add role count display to roles list
+- [ ] T028 [US1] Run tests (should pass): php artisan test --filter=RoleManagement
+- [ ] T029 [US1] Test manually: Create role through UI, verify in database
+- [ ] T030 [US1] Run Pint for code style: vendor/bin/pint app/Http/Livewire/Roles app/Http/Requests
 
-**Deliverable**: Functional role creation with validation and audit trail
+**Deliverable**: Functional role creation with validation and audit trail via spatie/activitylog
 
 ---
 
@@ -112,14 +109,14 @@
 - [ ] T055 [US3] Create AssignPermissionsRequest validation in app/Http/Requests/AssignPermissionsRequest.php
 - [ ] T056 [US3] Implement permission sync logic in EditRole component
 - [ ] T057 [US3] Add permission cache clearing after sync: app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions()
-- [ ] T058 [US3] Add audit logging for permission assignments/removals via RoleAuditService
+- [ ] T058 [US3] Add activity logging for permission assignments/removals using activity()->performedOn($role)->causedBy(auth()->user())->log()
 - [ ] T059 [US3] Group permissions by category in edit form
 - [ ] T060 [US3] Add "Select All" / "Deselect All" by category
 - [ ] T061 [US3] Run tests (should pass): php artisan test --filter=PermissionAssignment
 - [ ] T062 [US3] Test manually: Assign permissions, verify cache cleared, check audit log
 - [ ] T063 [US3] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/EditRole.php app/Http/Requests
 
-**Deliverable**: Permission assignment interface with audit trail and cache management
+**Deliverable**: Permission assignment interface with audit trail via spatie/activitylog and cache management
 
 ---
 
@@ -140,7 +137,7 @@
 - [ ] T072 [US4] Create assign-roles Blade view in resources/views/livewire/roles/assign-roles.blade.php
 - [ ] T073 [US4] Implement role sync logic for users
 - [ ] T074 [US4] Add last administrator protection check
-- [ ] T075 [US4] Add audit logging for user role assignments/removals via RoleAuditService
+- [ ] T075 [US4] Add activity logging for user role assignments/removals using activity()->performedOn($user)->causedBy(auth()->user())->log()
 - [ ] T076 [US4] Display role descriptions to help administrators understand each role
 - [ ] T077 [US4] Add visual indicators for currently assigned roles
 - [ ] T078 [US4] Run tests (should pass): php artisan test --filter=RoleAssignment
@@ -258,7 +255,7 @@
 1. **MVP (User Story 1 + 3)**: Create roles and assign permissions to them
    - Phases: Setup → Foundational → US1 → US3
    - Can deliver basic RBAC functionality
-   - Tasks: T001-T033, T045-T063
+   - Tasks: T001-T014, T015-T030, T045-T060
 
 2. **Complete RBAC (User Story 4)**: Assign roles to users
    - Add: US4
@@ -324,10 +321,10 @@ Setup → Foundational → US1 → US3 → US4 → US6 → Audit Viewer → Poli
 
 ### Coverage Completeness
 - [x] All 6 user stories from spec.md covered
-- [x] All entities from data-model.md addressed (Role, Permission, RoleAuditLog, User)
+- [x] All entities from data-model.md addressed (Role, Permission, Activity, User)
 - [x] All components from plan.md included (6 Livewire components)
 - [x] All migrations and seeders specified
-- [x] Audit logging integrated throughout
+- [x] Activity logging integrated throughout using spatie/laravel-activitylog
 - [x] Test tasks included (TDD workflow)
 
 ### Independent Testability
@@ -341,9 +338,9 @@ Setup → Foundational → US1 → US3 → US4 → US6 → Audit Viewer → Poli
 
 ## Task Summary
 
-- **Total Tasks**: 140
-- **Setup Tasks**: 17 (T001-T017)
-- **User Story Tasks**: 106 (T018-T101, T108-T118)
+- **Total Tasks**: 137
+- **Setup Tasks**: 14 (T001-T014)
+- **User Story Tasks**: 106 (T015-T098, T105-T115)
   - US1: 16 tasks
   - US2: 11 tasks
   - US3: 19 tasks
@@ -351,7 +348,7 @@ Setup → Foundational → US1 → US3 → US4 → US6 → Audit Viewer → Poli
   - US5: 10 tasks
   - US6: 11 tasks
   - Audit: 11 tasks
-- **Polish Tasks**: 22 (T119-T140)
+- **Polish Tasks**: 22 (T116-T137)
 - **Parallelizable Tasks**: 23 tasks marked with [P]
 
-**Ready for Implementation**: ✅ Yes - All tasks are specific, actionable, and testable
+**Ready for Implementation**: ✅ Yes - All tasks are specific, actionable, and testable. Now using spatie/laravel-activitylog for audit trail.
