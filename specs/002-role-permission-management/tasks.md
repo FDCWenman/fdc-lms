@@ -154,17 +154,17 @@
 
 **Independent Test**: Attempt to delete Administrator role, verify prevention
 
-- [ ] T081 [US6] Write feature test: cannot delete protected role in tests/Feature/RoleManagementTest.php
-- [ ] T082 [US6] Write feature test: Administrator role is always protected in tests/Feature/RoleManagementTest.php
-- [ ] T083 [US6] Write feature test: cannot remove own Administrator role if sole admin in tests/Feature/RoleManagementTest.php
-- [ ] T084 [US6] Write feature test: can remove Administrator from user if multiple admins exist in tests/Feature/RoleManagementTest.php
-- [ ] T085 [US6] Run tests (should fail): php artisan test --filter=RoleManagement
-- [ ] T086 [US6] Add is_protected flag check in role deletion logic in ManageRoles component
-- [ ] T087 [US6] Add last administrator check in AssignRoles component
-- [ ] T088 [US6] Add error messages for protected role deletion attempts
-- [ ] T089 [US6] Add confirmation modal for role deletion in manage-roles.blade.php
-- [ ] T090 [US6] Run tests (should pass): php artisan test --filter=RoleManagement
-- [ ] T091 [US6] Test manually: Try to delete Administrator role, verify prevention
+- [X] T081 [US6] Write feature test: cannot delete protected role in tests/Feature/RoleManagementTest.php
+- [X] T082 [US6] Write feature test: Administrator role is always protected in tests/Feature/RoleManagementTest.php
+- [X] T083 [US6] Write feature test: cannot remove own Administrator role if sole admin in tests/Feature/RoleAssignmentTest.php
+- [X] T084 [US6] Write feature test: can remove Administrator from user if multiple admins exist in tests/Feature/RoleAssignmentTest.php
+- [X] T085 [US6] Run tests (should fail): php artisan test --filter=RoleManagement
+- [X] T086 [US6] Add is_protected flag check in role deletion logic in ManageRoles component
+- [X] T087 [US6] Add last administrator check in AssignRoles component
+- [X] T088 [US6] Add error messages for protected role deletion attempts
+- [X] T089 [US6] Add confirmation modal for role deletion in manage-roles.blade.php
+- [X] T090 [US6] Run tests (should pass): php artisan test --filter=RoleManagement
+- [X] T091 [US6] Test manually: Try to delete Administrator role, verify prevention
 
 **Deliverable**: Administrator role protection and last admin safeguards
 
@@ -176,16 +176,16 @@
 
 **Independent Test**: View role details, see user count and list
 
-- [ ] T092 [P] [US5] Write feature test: role list shows user count in tests/Feature/RoleManagementTest.php
-- [ ] T093 [P] [US5] Write feature test: can view users assigned to role in tests/Feature/RoleManagementTest.php
-- [ ] T094 [P] [US5] Write feature test: deletion warning if role has users in tests/Feature/RoleManagementTest.php
-- [ ] T095 [P] [US5] Run tests (should fail): php artisan test --filter=RoleManagement
-- [ ] T096 [P] [US5] Add user count display using withCount() in ManageRoles component
+- [X] T092 [P] [US5] Write feature test: role list shows user count in tests/Feature/RoleManagementTest.php
+- [X] T093 [P] [US5] Write feature test: can view users assigned to role in tests/Feature/RoleManagementTest.php
+- [X] T094 [P] [US5] Write feature test: deletion warning if role has users in tests/Feature/RoleManagementTest.php
+- [X] T095 [P] [US5] Run tests (should fail): php artisan test --filter=RoleManagement
+- [X] T096 [P] [US5] Add user count display using withCount() in ManageRoles component
 - [ ] T097 [P] [US5] Create role detail view showing assigned users
-- [ ] T098 [P] [US5] Add deletion warning modal when role has users
+- [X] T098 [P] [US5] Add deletion warning modal when role has users
 - [ ] T099 [P] [US5] Add option to view all users with specific role
-- [ ] T100 [P] [US5] Run tests (should pass): php artisan test --filter=RoleManagement
-- [ ] T101 [P] [US5] Test manually: View role usage, try to delete role with users
+- [X] T100 [P] [US5] Run tests (should pass): php artisan test --filter=RoleManagement
+- [X] T101 [P] [US5] Test manually: View role usage, try to delete role with users
 
 **Deliverable**: Role usage visibility and deletion safeguards
 
