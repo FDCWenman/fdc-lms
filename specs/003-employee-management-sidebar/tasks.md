@@ -19,10 +19,10 @@
 
 **Purpose**: Initialize feature branch and verify prerequisites
 
-- [ ] T001 Verify branch `003-employee-management-sidebar` is checked out
-- [ ] T002 Verify permissions seeded in database: view-employees, manage-employees
-- [ ] T003 Verify FDC logo exists at public/images/fdc.png
-- [ ] T004 Run baseline test suite to confirm 41 tests passing from previous features
+- [X] T001 Verify branch `003-employee-management-sidebar` is checked out
+- [X] T002 Verify permissions seeded in database: view-employees, manage-employees
+- [X] T003 Verify FDC logo exists at public/images/fdc.png
+- [X] T004 Run baseline test suite to confirm 41 tests passing from previous features
 
 ---
 
@@ -32,10 +32,10 @@
 
 ⚠️ **CRITICAL**: Complete this phase before starting ANY user story work
 
-- [ ] T005 Create Livewire component directory: app/Livewire/Employees/
-- [ ] T006 Create view directory: resources/views/livewire/employees/
-- [ ] T007 Create test directories: tests/Feature/, tests/Unit/Livewire/
-- [ ] T008 Add employee management route in routes/web.php with auth and permission middleware
+- [X] T005 Create Livewire component directory: app/Livewire/Employees/
+- [X] T006 Create view directory: resources/views/livewire/employees/
+- [X] T007 Create test directories: tests/Feature/, tests/Unit/Livewire/
+- [X] T008 Add employee management route in routes/web.php with auth and permission middleware
 
 **Checkpoint**: Foundation ready - User story implementation can now begin
 
@@ -49,14 +49,14 @@
 
 ### Tests for User Story 1 (TDD - Write FIRST, ensure they FAIL)
 
-- [ ] T009 [P] [US1] Feature test: User with view-employees permission can access employee list in tests/Feature/EmployeeListTest.php
-- [ ] T010 [P] [US1] Feature test: User without view-employees permission receives 403 in tests/Feature/EmployeeListTest.php
-- [ ] T011 [P] [US1] Feature test: Search filters employees by name in tests/Feature/EmployeeListTest.php
-- [ ] T012 [P] [US1] Feature test: Search filters employees by email in tests/Feature/EmployeeListTest.php
-- [ ] T013 [P] [US1] Feature test: Status filter shows only matching employees in tests/Feature/EmployeeListTest.php
-- [ ] T014 [P] [US1] Feature test: Pagination shows 15 employees per page in tests/Feature/EmployeeListTest.php
-- [ ] T015 [P] [US1] Feature test: Employee list displays roles correctly in tests/Feature/EmployeeListTest.php
-- [ ] T016 [P] [US1] Feature test: Empty search shows appropriate message in tests/Feature/EmployeeListTest.php
+- [X] T009 [P] [US1] Feature test: User with view-employees permission can access employee list in tests/Feature/EmployeeListTest.php
+- [X] T010 [P] [US1] Feature test: User without view-employees permission receives 403 in tests/Feature/EmployeeListTest.php
+- [X] T011 [P] [US1] Feature test: Search filters employees by name in tests/Feature/EmployeeListTest.php
+- [X] T012 [P] [US1] Feature test: Search filters employees by email in tests/Feature/EmployeeListTest.php
+- [X] T013 [P] [US1] Feature test: Status filter shows only matching employees in tests/Feature/EmployeeListTest.php
+- [X] T014 [P] [US1] Feature test: Pagination shows 15 employees per page in tests/Feature/EmployeeListTest.php
+- [X] T015 [P] [US1] Feature test: Employee list displays roles correctly in tests/Feature/EmployeeListTest.php
+- [X] T016 [P] [US1] Feature test: Empty search shows appropriate message in tests/Feature/EmployeeListTest.php
 
 **Run tests - Expected: 8 failures** → `php artisan test --filter=EmployeeListTest`
 

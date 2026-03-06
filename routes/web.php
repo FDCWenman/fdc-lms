@@ -42,6 +42,11 @@ Route::middleware(['auth', 'user.active'])->group(function () {
         Route::get('/audit-logs', \App\Livewire\Roles\ViewAuditLogs::class)->name('audit-logs');
     });
 
+    // Employee Management Routes
+    Route::middleware('can:view-employees')->group(function () {
+        Route::get('/employees', \App\Livewire\Employees\ManageEmployees::class)->name('employees.index');
+    });
+
     // Employee dashboard (requires 'employee' role)
     Route::middleware(['role:employee'])->group(function () {
         Route::view('/leaves', 'pages.leaves')->name('leaves');
