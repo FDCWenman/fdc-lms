@@ -35,6 +35,7 @@ class RegisterUserAction
      *     last_name: string,
      *     name: string,
      *     email: string,
+     *     password: string,
      *     slack_id: string,
      *     hired_date: string,
      *     roles: array<string>
@@ -58,9 +59,6 @@ class RegisterUserAction
             throw new \RuntimeException('Slack ID already exists in system');
         }
 
-        // Generate random password for user
-        $randomPassword = Str::random(16);
-
         // Create user with "for_verification" status
         $user = User::create([
             'first_name' => $data['first_name'],
@@ -68,7 +66,7 @@ class RegisterUserAction
             'last_name' => $data['last_name'],
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($randomPassword),
+            'password' => Hash::make($data['password']),
             'slack_id' => $data['slack_id'],
             'hired_date' => $data['hired_date'],
             'status' => 2, // for_verification
@@ -82,12 +80,23 @@ class RegisterUserAction
 
         // Generate verification token
         $token = $this->generateVerificationToken($user);
+        $verificationUrl = route('auth.verify', ['token' => $token->token]);
 
         // Send verification DM and add to Slack channel
-        if (config('app.env') !== 'local') {
-            $verificationUrl = route('auth.verify', ['token' => $token->token]);
+        $allowSlackLocal = (bool) env('ALLOW_SLACK_LOCAL', false);
+        $shouldSendSlack = config('app.env') !== 'local' || $allowSlackLocal;
+        
+        if ($shouldSendSlack) {
             $this->slackService->sendVerificationDM($data['slack_id'], $verificationUrl);
             $this->slackService->addToChannel($data['slack_id']);
+        } else {
+            // In local environment, log the verification URL for testing
+            \Log::info('User registration verification URL (local environment)', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'slack_id' => $data['slack_id'],
+                'verification_url' => $verificationUrl,
+            ]);
         }
 
         return $user;

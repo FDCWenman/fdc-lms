@@ -29,6 +29,10 @@ class Register extends Component
 
     public string $email = '';
 
+    public string $password = '';
+
+    public string $password_confirmation = '';
+
     public string $slack_id = '';
 
     public string $hired_date = '';
@@ -104,6 +108,7 @@ class Register extends Component
             'middle_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email:rfc,dns', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
             'slack_id' => ['required', 'string', 'max:50', 'unique:users,slack_id', 'regex:/^[UW][A-Z0-9]{8,10}$/'],
             'hired_date' => ['required', 'date', 'before_or_equal:today'],
         ], [
@@ -111,6 +116,9 @@ class Register extends Component
             'last_name.required' => 'Last name is required.',
             'email.required' => 'Email address is required.',
             'email.unique' => 'This email address is already registered.',
+            'password.required' => 'Password is required.',
+            'password.min' => 'Password must be at least 8 characters.',
+            'password.confirmed' => 'Password confirmation does not match.',
             'slack_id.required' => 'Slack ID is required.',
             'slack_id.unique' => 'This Slack ID is already assigned to another user.',
             'slack_id.regex' => 'Slack ID must be in the format U123456789 or W123456789.',
@@ -133,6 +141,7 @@ class Register extends Component
                 'last_name' => $validated['last_name'],
                 'name' => $fullName,
                 'email' => $validated['email'],
+                'password' => $validated['password'],
                 'slack_id' => $validated['slack_id'],
                 'hired_date' => $validated['hired_date'],
                 'roles' => ['employee'], // Default role

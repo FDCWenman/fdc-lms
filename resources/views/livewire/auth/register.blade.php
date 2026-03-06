@@ -52,18 +52,43 @@
                     <div class="space-y-4">
                         <h4 class="text-md font-medium text-gray-900">Basic Information</h4>
 
-                        {{-- Name --}}
-                        <flux:field>
-                            <flux:label for="name">Full Name *</flux:label>
-                            <flux:input
-                                wire:model="name"
-                                id="name"
-                                type="text"
-                                placeholder="John Doe"
-                                required
-                            />
-                            <flux:error name="name" />
-                        </flux:field>
+                        {{-- Name Fields --}}
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                            <flux:field>
+                                <flux:label for="first_name">First Name *</flux:label>
+                                <flux:input
+                                    wire:model="first_name"
+                                    id="first_name"
+                                    type="text"
+                                    placeholder="John"
+                                    required
+                                />
+                                <flux:error name="first_name" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label for="middle_name">Middle Name</flux:label>
+                                <flux:input
+                                    wire:model="middle_name"
+                                    id="middle_name"
+                                    type="text"
+                                    placeholder="Michael"
+                                />
+                                <flux:error name="middle_name" />
+                            </flux:field>
+
+                            <flux:field>
+                                <flux:label for="last_name">Last Name *</flux:label>
+                                <flux:input
+                                    wire:model="last_name"
+                                    id="last_name"
+                                    type="text"
+                                    placeholder="Doe"
+                                    required
+                                />
+                                <flux:error name="last_name" />
+                            </flux:field>
+                        </div>
 
                         {{-- Email --}}
                         <flux:field>
@@ -90,7 +115,7 @@
                                     required
                                 />
                                 <flux:error name="password" />
-                                <flux:description>Min 8 characters with mixed case, numbers, and symbols</flux:description>
+                                <flux:description>Min 8 characters</flux:description>
                             </flux:field>
 
                             <flux:field>
@@ -103,8 +128,21 @@
                                     required
                                 />
                                 <flux:error name="password_confirmation" />
+                                <flux:description>&nbsp;</flux:description>
                             </flux:field>
                         </div>
+
+                        {{-- Hired Date --}}
+                        <flux:field>
+                            <flux:label for="hired_date">Hired Date *</flux:label>
+                            <flux:input
+                                wire:model="hired_date"
+                                id="hired_date"
+                                type="date"
+                                required
+                            />
+                            <flux:error name="hired_date" />
+                        </flux:field>
                     </div>
 
                     {{-- Slack Integration Section --}}
@@ -149,78 +187,6 @@
                             @endif
                             <flux:description>Format: U123456789 or W123456789. Will be validated in real-time.</flux:description>
                         </flux:field>
-                    </div>
-
-                    {{-- Role Assignment Section --}}
-                    <div class="space-y-4 border-t border-gray-200 pt-6">
-                        <h4 class="text-md font-medium text-gray-900">Role Assignment</h4>
-
-                        <flux:field>
-                            <flux:label>Select Roles *</flux:label>
-                            <div class="space-y-2">
-                                @foreach ($availableRoles as $role)
-                                    <flux:checkbox
-                                        wire:model="roles"
-                                        value="{{ $role }}"
-                                        :label="ucwords(str_replace('-', ' ', $role))"
-                                    />
-                                @endforeach
-                            </div>
-                            <flux:error name="roles" />
-                            <flux:description>User can have multiple roles for different permissions</flux:description>
-                        </flux:field>
-                    </div>
-
-                    {{-- Default Approvers Section --}}
-                    <div class="space-y-4 border-t border-gray-200 pt-6">
-                        <h4 class="text-md font-medium text-gray-900">Default Approvers</h4>
-                        <p class="text-sm text-gray-500">
-                            Assign default approvers for this employee's leave requests
-                        </p>
-
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                            {{-- HR Approver --}}
-                            <flux:field>
-                                <flux:label for="hr_approver_id">HR Approver</flux:label>
-                                <flux:select wire:model="hr_approver_id" id="hr_approver_id">
-                                    <option value="">Select HR Approver</option>
-                                    @foreach ($approvers as $approver)
-                                        <option value="{{ $approver['id'] }}">
-                                            {{ $approver['name'] }}
-                                        </option>
-                                    @endforeach
-                                </flux:select>
-                                <flux:error name="hr_approver_id" />
-                            </flux:field>
-
-                            {{-- Team Lead Approver --}}
-                            <flux:field>
-                                <flux:label for="tl_approver_id">Team Lead Approver</flux:label>
-                                <flux:select wire:model="tl_approver_id" id="tl_approver_id">
-                                    <option value="">Select Team Lead</option>
-                                    @foreach ($approvers as $approver)
-                                        <option value="{{ $approver['id'] }}">
-                                            {{ $approver['name'] }}
-                                        </option>
-                                    @endforeach
-                                </flux:select>
-                                <flux:error name="tl_approver_id" />
-                            </flux:field>
-
-                            {{-- Project Manager Approver --}}
-                            <flux:field>
-                                <flux:label for="pm_approver_id">Project Manager Approver</flux:label>
-                                <flux:select wire:model="pm_approver_id" id="pm_approver_id">
-                                    <option value="">Select PM</option>
-                                    @foreach ($approvers as $approver)
-                                        <option value="{{ $approver['id'] }}">
-                                            {{ $approver['name'] }}
-                                        </option>
-                                    @endforeach
-                                </flux:select>
-                                <flux:error name="pm_approver_id" />
-                            </flux:field>
-                        </div>
                     </div>
 
                     {{-- Form Actions --}}

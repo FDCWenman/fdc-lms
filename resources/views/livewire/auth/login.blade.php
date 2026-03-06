@@ -42,12 +42,6 @@
                     <flux:error name="password" />
                 </flux:field>
 
-                {{-- Remember Me --}}
-                <div class="flex items-center">
-                    <flux:checkbox wire:model="remember" id="remember" />
-                    <flux:label for="remember" class="ml-2">Remember me</flux:label>
-                </div>
-
                 {{-- Submit Button --}}
                 <flux:button type="submit" variant="primary" class="w-full">
                     <span wire:loading.remove>Sign in</span>
@@ -57,8 +51,21 @@
         </flux:card>
 
         {{-- Additional Links --}}
-        <div class="text-center text-sm text-gray-600">
+        <div class="text-center text-sm text-gray-600 mb-2">
             <p>For assistance, please contact your HR administrator.</p>
+        </div>
+
+         <div class="text-center text-sm text-gray-600 mb-2">
+            <p>Don't have an account? <flux:link :href="route('register')" wire:navigate>Register here</flux:link></p>
+        </div>
+
+        {{-- Forgot password --}}
+        <div class="text-center text-sm text-gray-600">
+            @if (Route::has('password.request'))
+                <flux:link :href="route('password.request')" wire:navigate>
+                    {{ __('Forgot your password?') }}
+                </flux:link>
+            @endif
         </div>
     </div>
 </div>

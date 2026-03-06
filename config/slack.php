@@ -13,10 +13,8 @@ return [
     |
     */
 
-    'slack' => [
-        'bot_token' => env('SLACK_BOT_TOKEN'),
-        'channel_id' => env('SLACK_CHANNEL_ID'),
-        'webhook_url' => env('SLACK_WEBHOOK_URL'),
-    ],
+    'bot_token' => env('SLACK_BOT_TOKEN', ''),
+    'channel_id' => env('SLACK_CHANNEL_ID', ''),
+    'webhook_url' => env('SLACK_WEBHOOK_URL', ''),
 
 ];

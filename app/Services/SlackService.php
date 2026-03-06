@@ -11,22 +11,24 @@ class SlackService
     protected string $channelId;
     protected string $webhookUrl;
     protected bool $isLocal;
+    protected bool $allowSlackLocal;
 
     public function __construct()
     {
-        $this->botToken = config('slack.bot_token');
-        $this->channelId = config('slack.channel_id');
-        $this->webhookUrl = config('slack.webhook_url');
+        $this->botToken = config('slack.bot_token', '');
+        $this->channelId = config('slack.channel_id', '');
+        $this->webhookUrl = config('slack.webhook_url', '');
         $this->isLocal = app()->environment('local');
+        $this->allowSlackLocal = (bool) env('ALLOW_SLACK_LOCAL', false);
     }
 
     /**
      * Validate if a Slack ID exists and is valid.
-     * In local environment, bypass actual API call.
+     * In local environment, bypass actual API call unless ALLOW_SLACK_LOCAL=1.
      */
     public function validateSlackId(string $slackId): bool
     {
-        if ($this->isLocal) {
+        if ($this->isLocal && !$this->allowSlackLocal) {
             Log::info('Slack API bypassed in local environment', ['slack_id' => $slackId]);
             return true;
         }
@@ -149,6 +151,73 @@ class SlackService
             return $data['ok'] ?? false;
         } catch (\Exception $e) {
             Log::error('Slack verification DM failed', [
+                'slack_id' => $slackId,
+                'error' => $e->getMessage(),
+            ]);
+
+            return false;
+        }
+    }
+
+    /**
+     * Send a password reset DM to the user via Slack.
+     * In local environment, skip actual API call.
+     */
+    public function sendPasswordResetDM(string $slackId, string $resetUrl): bool
+    {
+        if ($this->isLocal && !$this->allowSlackLocal) {
+            Log::info('Slack password reset DM bypassed in local environment', [
+                'slack_id' => $slackId,
+                'url' => $resetUrl,
+            ]);
+            return true;
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $this->botToken,
+            ])->post('https://slack.com/api/chat.postMessage', [
+                'channel' => $slackId,
+                'text' => "You requested to reset your FDCLeave password. Click the link below to reset it:\n\n{$resetUrl}\n\nThis link will expire in 1 hour. If you didn't request this, please ignore this message.",
+                'blocks' => [
+                    [
+                        'type' => 'section',
+                        'text' => [
+                            'type' => 'mrkdwn',
+                            'text' => "*Password Reset Request*\n\nYou requested to reset your FDCLeave password.",
+                        ],
+                    ],
+                    [
+                        'type' => 'actions',
+                        'elements' => [
+                            [
+                                'type' => 'button',
+                                'text' => [
+                                    'type' => 'plain_text',
+                                    'text' => 'Reset Password',
+                                ],
+                                'url' => $resetUrl,
+                                'style' => 'danger',
+                            ],
+                        ],
+                    ],
+                    [
+                        'type' => 'context',
+                        'elements' => [
+                            [
+                                'type' => 'mrkdwn',
+                                'text' => "_This link will expire in 1 hour. If you didn't request this, please ignore this message._",
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $data = $response->json();
+
+            return $data['ok'] ?? false;
+        } catch (\Exception $e) {
+            Log::error('Slack password reset DM failed', [
                 'slack_id' => $slackId,
                 'error' => $e->getMessage(),
             ]);
