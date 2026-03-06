@@ -96,25 +96,25 @@
 
 **Independent Test**: Select role, assign permissions, save, verify associations in database
 
-- [ ] T045 [US3] Write feature test: can assign permission to role in tests/Feature/PermissionAssignmentTest.php
-- [ ] T046 [US3] Write feature test: can assign multiple permissions at once in tests/Feature/PermissionAssignmentTest.php
-- [ ] T047 [US3] Write feature test: can remove permission from role in tests/Feature/PermissionAssignmentTest.php
-- [ ] T048 [US3] Write feature test: permission cache cleared after changes in tests/Feature/PermissionAssignmentTest.php
-- [ ] T049 [US3] Write feature test: audit logs created for assignments in tests/Feature/PermissionAssignmentTest.php
-- [ ] T050 [US3] Write feature test: cannot assign non-existent permission in tests/Feature/PermissionAssignmentTest.php
-- [ ] T051 [US3] Run tests (should fail): php artisan test --filter=PermissionAssignment
-- [ ] T052 [US3] Create EditRole Livewire component in app/Http/Livewire/Roles/EditRole.php
-- [ ] T053 [US3] Create edit-role Blade view with permission checkboxes in resources/views/livewire/roles/edit-role.blade.php
-- [ ] T054 [US3] Create UpdateRoleRequest validation in app/Http/Requests/UpdateRoleRequest.php
-- [ ] T055 [US3] Create AssignPermissionsRequest validation in app/Http/Requests/AssignPermissionsRequest.php
-- [ ] T056 [US3] Implement permission sync logic in EditRole component
-- [ ] T057 [US3] Add permission cache clearing after sync: app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions()
-- [ ] T058 [US3] Add activity logging for permission assignments/removals using activity()->performedOn($role)->causedBy(auth()->user())->log()
-- [ ] T059 [US3] Group permissions by category in edit form
-- [ ] T060 [US3] Add "Select All" / "Deselect All" by category
-- [ ] T061 [US3] Run tests (should pass): php artisan test --filter=PermissionAssignment
-- [ ] T062 [US3] Test manually: Assign permissions, verify cache cleared, check audit log
-- [ ] T063 [US3] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/EditRole.php app/Http/Requests
+- [X] T045 [US3] Write feature test: can assign permission to role in tests/Feature/PermissionAssignmentTest.php
+- [X] T046 [US3] Write feature test: can assign multiple permissions at once in tests/Feature/PermissionAssignmentTest.php
+- [X] T047 [US3] Write feature test: can remove permission from role in tests/Feature/PermissionAssignmentTest.php
+- [X] T048 [US3] Write feature test: permission cache cleared after changes in tests/Feature/PermissionAssignmentTest.php
+- [X] T049 [US3] Write feature test: audit logs created for assignments in tests/Feature/PermissionAssignmentTest.php
+- [X] T050 [US3] Write feature test: cannot assign non-existent permission in tests/Feature/PermissionAssignmentTest.php
+- [X] T051 [US3] Run tests (should fail): php artisan test --filter=PermissionAssignment
+- [X] T052 [US3] Create EditRole Livewire component in app/Http/Livewire/Roles/EditRole.php
+- [X] T053 [US3] Create edit-role Blade view with permission checkboxes in resources/views/livewire/roles/edit-role.blade.php
+- [X] T054 [US3] Create UpdateRoleRequest validation in app/Http/Requests/UpdateRoleRequest.php (Using inline validation)
+- [X] T055 [US3] Create AssignPermissionsRequest validation in app/Http/Requests/AssignPermissionsRequest.php (Using inline validation)
+- [X] T056 [US3] Implement permission sync logic in EditRole component
+- [X] T057 [US3] Add permission cache clearing after sync: app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions()
+- [X] T058 [US3] Add activity logging for permission assignments/removals using activity()->performedOn($role)->causedBy(auth()->user())->log()
+- [X] T059 [US3] Group permissions by category in edit form
+- [X] T060 [US3] Add "Select All" / "Deselect All" by category
+- [X] T061 [US3] Run tests (should pass): php artisan test --filter=PermissionAssignment
+- [X] T062 [US3] Test manually: Assign permissions, verify cache cleared, check audit log
+- [X] T063 [US3] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/EditRole.php app/Http/Requests
 
 **Deliverable**: Permission assignment interface with audit trail via spatie/activitylog and cache management
 
@@ -126,23 +126,23 @@
 
 **Independent Test**: Select user, assign role, verify user gains permissions
 
-- [ ] T064 [US4] Write feature test: can assign role to user in tests/Feature/RoleAssignmentTest.php
-- [ ] T065 [US4] Write feature test: can assign multiple roles to user in tests/Feature/RoleAssignmentTest.php
-- [ ] T066 [US4] Write feature test: can remove role from user in tests/Feature/RoleAssignmentTest.php
-- [ ] T067 [US4] Write feature test: user gains combined permissions from all roles in tests/Feature/RoleAssignmentTest.php
-- [ ] T068 [US4] Write feature test: cannot remove Administrator role from last admin in tests/Feature/RoleAssignmentTest.php
-- [ ] T069 [US4] Write feature test: audit logs created for role assignments in tests/Feature/RoleAssignmentTest.php
-- [ ] T070 [US4] Run tests (should fail): php artisan test --filter=RoleAssignment
-- [ ] T071 [US4] Create AssignRoles Livewire component in app/Http/Livewire/Roles/AssignRoles.php
-- [ ] T072 [US4] Create assign-roles Blade view in resources/views/livewire/roles/assign-roles.blade.php
-- [ ] T073 [US4] Implement role sync logic for users
-- [ ] T074 [US4] Add last administrator protection check
-- [ ] T075 [US4] Add activity logging for user role assignments/removals using activity()->performedOn($user)->causedBy(auth()->user())->log()
-- [ ] T076 [US4] Display role descriptions to help administrators understand each role
-- [ ] T077 [US4] Add visual indicators for currently assigned roles
-- [ ] T078 [US4] Run tests (should pass): php artisan test --filter=RoleAssignment
+- [X] T064 [US4] Write feature test: can assign role to user in tests/Feature/RoleAssignmentTest.php
+- [X] T065 [US4] Write feature test: can assign multiple roles to user in tests/Feature/RoleAssignmentTest.php
+- [X] T066 [US4] Write feature test: can remove role from user in tests/Feature/RoleAssignmentTest.php
+- [X] T067 [US4] Write feature test: user gains combined permissions from all roles in tests/Feature/RoleAssignmentTest.php
+- [X] T068 [US4] Write feature test: cannot remove Administrator role from last admin in tests/Feature/RoleAssignmentTest.php
+- [X] T069 [US4] Write feature test: audit logs created for role assignments in tests/Feature/RoleAssignmentTest.php
+- [X] T070 [US4] Run tests (should fail): php artisan test --filter=RoleAssignment
+- [X] T071 [US4] Create AssignRoles Livewire component in app/Http/Livewire/Roles/AssignRoles.php
+- [X] T072 [US4] Create assign-roles Blade view in resources/views/livewire/roles/assign-roles.blade.php
+- [X] T073 [US4] Implement role sync logic for users
+- [X] T074 [US4] Add last administrator protection check
+- [X] T075 [US4] Add activity logging for user role assignments/removals using activity()->performedOn($user)->causedBy(auth()->user())->log()
+- [X] T076 [US4] Display role descriptions to help administrators understand each role
+- [X] T077 [US4] Add visual indicators for currently assigned roles
+- [X] T078 [US4] Run tests (should pass): php artisan test --filter=RoleAssignment
 - [ ] T079 [US4] Test manually: Assign roles to users, verify permissions work
-- [ ] T080 [US4] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/AssignRoles.php
+- [X] T080 [US4] Run Pint: vendor/bin/pint app/Http/Livewire/Roles/AssignRoles.php
 
 **Deliverable**: User-role assignment with multi-role support and admin protection
 
