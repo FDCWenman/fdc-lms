@@ -42,16 +42,21 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         @foreach($permissions as $permission)
-                            <flux:checkbox
-                                wire:model="selectedPermissions"
-                                value="{{ $permission['id'] }}"
-                                id="permission-{{ $permission['id'] }}"
-                            >
-                                <flux:checkbox.label>{{ $permission['name'] }}</flux:checkbox.label>
-                                @if($permission['description'])
-                                    <flux:checkbox.description>{{ $permission['description'] }}</flux:checkbox.description>
-                                @endif
-                            </flux:checkbox>
+                            <label for="permission-{{ $permission['id'] }}" class="flex items-start gap-3 p-3 rounded-lg border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer has-[:checked]:bg-zinc-100 dark:has-[:checked]:bg-zinc-800 has-[:checked]:border-zinc-400 dark:has-[:checked]:border-zinc-500">
+                                <input
+                                    type="checkbox"
+                                    wire:model="selectedPermissions"
+                                    value="{{ $permission['id'] }}"
+                                    id="permission-{{ $permission['id'] }}"
+                                    class="mt-0.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:checked:bg-zinc-600"
+                                >
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-zinc-900 dark:text-zinc-100">{{ $permission['name'] }}</div>
+                                    @if($permission['description'])
+                                        <div class="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">{{ $permission['description'] }}</div>
+                                    @endif
+                                </div>
+                            </label>
                         @endforeach
                     </div>
                 </flux:card>

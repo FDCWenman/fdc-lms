@@ -4,7 +4,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
                 <flux:heading size="xl">Roles</flux:heading>
-                <flux:subheading>Manage system roles and their permissions</flux:subheading>
+                <p class="mb-1 text-zinc-500 dark:text-zinc-400">Manage system roles and their permissions</p>
             </div>
             <div class="flex items-center gap-2">
                 <flux:button variant="ghost" icon="lock-closed" href="{{ route('admin.roles.permissions') }}">
@@ -37,38 +37,35 @@
     @if ($roles->count() > 0)
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($roles as $role)
-                <flux:card class="relative group">
-                    {{-- Protected Badge --}}
-                    @if ($role->is_protected)
-                        <div class="absolute top-3 right-3">
-                            <flux:badge color="amber" size="sm" icon="shield-check">System</flux:badge>
-                        </div>
-                    @endif
-
-                    <div class="flex items-start gap-4">
-                        {{-- Role Avatar --}}
-                        <flux:avatar size="lg" class="bg-zinc-100 dark:bg-zinc-800">
-                            {{ strtoupper(substr($role->name, 0, 2)) }}
-                        </flux:avatar>
-
-                        <div class="flex-1 min-w-0">
+                <flux:card class="group">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
                             <flux:heading size="lg" class="truncate">{{ $role->name }}</flux:heading>
-                            <flux:text class="line-clamp-2 mt-1">
-                                {{ $role->description ?? 'No description provided' }}
-                            </flux:text>
+                            @if ($role->is_protected)
+                                <svg class="size-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            @endif
                         </div>
+                        <flux:text class="line-clamp-2 mt-1">
+                            {{ $role->description ?? 'No description provided' }}
+                        </flux:text>
                     </div>
 
                     <flux:separator class="my-4" />
 
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-1.5">
-                                <flux:icon.users class="size-4 text-zinc-400" />
+                        <div class="flex items-center gap-6">
+                            <div class="flex items-center gap-2">
+                                <svg class="size-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
                                 <flux:text size="sm">{{ $role->users_count }} users</flux:text>
                             </div>
-                            <div class="flex items-center gap-1.5">
-                                <flux:icon.key class="size-4 text-zinc-400" />
+                            <div class="flex items-center gap-2">
+                                <svg class="size-4 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                </svg>
                                 <flux:text size="sm">{{ $role->permissions_count ?? 0 }} permissions</flux:text>
                             </div>
                         </div>
