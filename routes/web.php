@@ -1,12 +1,18 @@
 <?php
 
+use App\Http\Controllers\Auth\VerificationController;
 use App\Livewire\Auth\Login;
 use App\Livewire\Auth\Register;
+use App\Livewire\Auth\RequestNewVerification;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes (login)
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
+
+    // Verification routes
+    Route::get('/auth/verify', [VerificationController::class, 'verify'])->name('auth.verify');
+    Route::get('/auth/request-verification', RequestNewVerification::class)->name('auth.request-verification');
 });
 
 // Authenticated routes

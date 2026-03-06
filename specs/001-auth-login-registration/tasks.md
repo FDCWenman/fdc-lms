@@ -170,35 +170,35 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Actions & Business Logic
 
-- [ ] T051 [US3] Create VerifyAccountAction in app/Actions/Auth/VerifyAccountAction.php
-- [ ] T052 [US3] Write unit tests for VerifyAccountAction in tests/Unit/Actions/Auth/VerifyAccountActionTest.php
+- [X] T051 [US3] Create VerifyAccountAction in app/Actions/Auth/VerifyAccountAction.php
+- [X] T052 [US3] Write unit tests for VerifyAccountAction in tests/Unit/Actions/Auth/VerifyAccountActionTest.php
 
 ### Controllers
 
-- [ ] T053 [US3] Create VerificationController for token handling in app/Http/Controllers/Auth/VerificationController.php
+- [X] T053 [US3] Create VerificationController for token handling in app/Http/Controllers/Auth/VerificationController.php
 
 ### UI Components
 
-- [ ] T054 [US3] Create RequestNewVerification Livewire component in app/Livewire/Auth/RequestNewVerification.php
-- [ ] T055 [US3] Create verification result Blade view in resources/views/auth/verification-result.blade.php
-- [ ] T056 [US3] Create request new verification Blade view in resources/views/livewire/auth/request-new-verification.blade.php
+- [X] T054 [US3] Create RequestNewVerification Livewire component in app/Livewire/Auth/RequestNewVerification.php
+- [X] T055 [US3] Create verification result Blade view in resources/views/auth/verification-result.blade.php
+- [X] T056 [US3] Create request new verification Blade view in resources/views/livewire/auth/request-new-verification.blade.php
 
 ### Slack Integration
 
-- [ ] T057 [US3] Implement sendVerificationDM method in SlackService in app/Services/SlackService.php
+- [X] T057 [US3] Implement sendVerificationDM method in SlackService in app/Services/SlackService.php
 
 ### Routes
 
-- [ ] T058 [US3] Define verification routes in routes/web.php
+- [X] T058 [US3] Define verification routes in routes/web.php
 
 ### Tests
 
-- [ ] T059 [US3] Write feature test for successful verification in tests/Feature/Auth/VerificationTest.php
-- [ ] T060 [US3] Write feature test for expired token handling in tests/Feature/Auth/VerificationTest.php
-- [ ] T061 [US3] Write feature test for invalid token handling in tests/Feature/Auth/VerificationTest.php
-- [ ] T062 [US3] Write feature test for already verified account in tests/Feature/Auth/VerificationTest.php
-- [ ] T063 [US3] Write feature test for requesting new verification link in tests/Feature/Auth/VerificationTest.php
-- [ ] T064 [US3] Write feature test for verified user can login in tests/Feature/Auth/VerificationTest.php
+- [X] T059 [US3] Write feature test for successful verification in tests/Feature/Auth/VerificationTest.php
+- [X] T060 [US3] Write feature test for expired token handling in tests/Feature/Auth/VerificationTest.php
+- [X] T061 [US3] Write feature test for invalid token handling in tests/Feature/Auth/VerificationTest.php
+- [X] T062 [US3] Write feature test for already verified account in tests/Feature/Auth/VerificationTest.php
+- [X] T063 [US3] Write feature test for requesting new verification link in tests/Feature/Auth/VerificationTest.php
+- [X] T064 [US3] Write feature test for verified user can login in tests/Feature/Auth/VerificationTest.php
 
 ---
 
