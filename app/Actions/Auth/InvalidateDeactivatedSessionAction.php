@@ -14,9 +14,6 @@ class InvalidateDeactivatedSessionAction
 {
     /**
      * Execute the session invalidation.
-     *
-     * @param  int  $userId
-     * @return bool
      */
     public function execute(int $userId): bool
     {

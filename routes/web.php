@@ -29,8 +29,18 @@ Route::middleware(['auth', 'user.active'])->group(function () {
         auth()->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
+
         return redirect('/login');
     })->name('logout');
+
+    // Role Management Routes (Administrator only)
+    Route::prefix('admin/roles')->name('admin.roles.')->middleware('role:Administrator')->group(function () {
+        Route::get('/', \App\Livewire\Roles\ManageRoles::class)->name('index');
+        Route::get('/{roleId}/edit', \App\Livewire\Roles\EditRole::class)->name('edit');
+        Route::get('/users/{userId}/assign', \App\Livewire\Roles\AssignRoles::class)->name('assign');
+        Route::get('/permissions', \App\Livewire\Roles\ViewPermissions::class)->name('permissions');
+        Route::get('/audit-logs', \App\Livewire\Roles\ViewAuditLogs::class)->name('audit-logs');
+    });
 
     // Employee dashboard (requires 'employee' role)
     Route::middleware(['role:employee'])->group(function () {

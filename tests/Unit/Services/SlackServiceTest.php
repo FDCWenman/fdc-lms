@@ -13,7 +13,7 @@ class SlackServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->slackService = new SlackService();
+        $this->slackService = new SlackService;
     }
 
     /** @test */

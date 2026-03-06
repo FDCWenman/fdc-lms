@@ -41,9 +41,9 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::authenticateUsing(function (Request $request) {
             $user = \App\Models\User::where('email', $request->email)->first();
 
-            if ($user && 
+            if ($user &&
                 \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
-                
+
                 // Check if user is active (status = 1) AND verified (verified_at not null)
                 if ($user->status !== 1) {
                     throw \Illuminate\Validation\ValidationException::withMessages([

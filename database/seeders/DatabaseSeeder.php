@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,11 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ensure roles exist
-        $roles = ['employee', 'hr', 'team-lead', 'project-manager'];
-        foreach ($roles as $role) {
-            Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']);
-        }
+        // Seed permissions first (must be before roles)
+        $this->call(PermissionSeeder::class);
+
+        // Seed roles (must be before users)
+        $this->call(RoleSeeder::class);
 
         // Create HR admin user for testing registration
         $hrUser = User::firstOrCreate(
@@ -47,4 +46,3 @@ class DatabaseSeeder extends Seeder
         $employee->syncRoles(['employee']);
     }
 }
-

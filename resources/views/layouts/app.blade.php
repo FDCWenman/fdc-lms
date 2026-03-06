@@ -14,6 +14,10 @@
             @role('hr')
                 <flux:navbar.item href="{{ route('register') }}">Register User</flux:navbar.item>
             @endrole
+            
+            @role('Administrator')
+                <flux:navbar.item href="{{ route('admin.roles.index') }}">Role Management</flux:navbar.item>
+            @endrole
 
             <flux:spacer />
 

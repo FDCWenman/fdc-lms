@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'slack_id' => 'U' . fake()->unique()->numerify('#########'),
+            'slack_id' => 'U'.fake()->unique()->numerify('#########'),
             'status' => 1, // active by default
             'verified_at' => now(), // verified by default for testing
             'default_approvers' => null,
