@@ -28,13 +28,13 @@ This feature follows an **incremental delivery approach** where each user story 
 **Goal**: Initialize project infrastructure and dependencies
 
 - [X] T001 Install and configure Laravel Fortify in config/fortify.php
-- [ ] T002 [P] Install Spatie Laravel Permission package via composer
-- [ ] T003 [P] Publish Spatie migrations and run to create roles/permissions tables
+- [X] T002 [P] Install Spatie Laravel Permission package via composer
+- [X] T003 [P] Publish Spatie migrations and run to create roles/permissions tables
 - [X] T004 [P] Configure Slack API credentials in config/services.php
 - [X] T005 [P] Set up database session driver in config/session.php
 - [X] T006 [P] Create verification_tokens table migration in database/migrations/
 - [X] T007 [P] Remove legacy role_id/secondary_role_id columns from users table (if exist)
-- [ ] T008 Run migrations to set up database schema
+- [X] T008 Run migrations to set up database schema
 - [X] T009 Seed roles table with 4 roles using Spatie (employee, hr, team-lead, project-manager)
 
 ---
@@ -216,19 +216,19 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Tests
 
-- [ ] T065 [US4] Write feature test for employee role redirection to /leaves in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T066 [US4] Write feature test for hr role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T067 [US4] Write feature test for team-lead role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T068 [US4] Write feature test for project-manager role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T069 [US4] Write feature test for multi-role user access in tests/Feature/Auth/RoleRedirectionTest.php
-- [ ] T070 [US4] Write feature test for unauthorized role access blocked in tests/Feature/Auth/RoleRedirectionTest.php
+- [X] T065 [US4] Write feature test for employee role redirection to /leaves in tests/Feature/Auth/RoleRedirectionTest.php
+- [X] T066 [US4] Write feature test for hr role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
+- [X] T067 [US4] Write feature test for team-lead role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
+- [X] T068 [US4] Write feature test for project-manager role redirection to /portal in tests/Feature/Auth/RoleRedirectionTest.php
+- [X] T069 [US4] Write feature test for multi-role user access in tests/Feature/Auth/RoleRedirectionTest.php
+- [X] T070 [US4] Write feature test for unauthorized role access blocked in tests/Feature/Auth/RoleRedirectionTest.php
 
 ### Integration
 
-- [ ] T071 [US4] Apply Spatie 'role:employee' middleware to /leaves route in routes/web.php
-- [ ] T072 [US4] Apply Spatie 'role:hr|team-lead|project-manager' middleware to /portal route in routes/web.php
-- [ ] T073 [US4] Create placeholder /leaves page for employees in resources/views/pages/leaves.blade.php
-- [ ] T074 [US4] Create placeholder /portal page for approvers in resources/views/pages/portal.blade.php
+- [X] T071 [US4] Apply Spatie 'role:employee' middleware to /leaves route in routes/web.php
+- [X] T072 [US4] Apply Spatie 'role:hr|team-lead|project-manager' middleware to /portal route in routes/web.php
+- [X] T073 [US4] Create placeholder /leaves page for employees in resources/views/pages/leaves.blade.php
+- [X] T074 [US4] Create placeholder /portal page for approvers in resources/views/pages/portal.blade.php
 
 ---
 
@@ -246,20 +246,20 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### UI Components
 
-- [ ] T075 [US5] Add logout button to main layout in resources/views/layouts/app.blade.php
+- [X] T075 [US5] Add logout button to main layout in resources/views/layouts/app.blade.php
 
 ### Actions & Business Logic
 
-- [ ] T076 [US5] Create InvalidateDeactivatedSessionAction in app/Actions/Auth/InvalidateDeactivatedSessionAction.php
-- [ ] T077 [US5] Integrate session invalidation check in EnsureUserIsActive middleware in app/Http/Middleware/EnsureUserIsActive.php
+- [X] T076 [US5] Create InvalidateDeactivatedSessionAction in app/Actions/Auth/InvalidateDeactivatedSessionAction.php
+- [X] T077 [US5] Integrate session invalidation check in EnsureUserIsActive middleware in app/Http/Middleware/EnsureUserIsActive.php
 
 ### Tests
 
-- [ ] T078 [US5] Write feature test for successful logout in tests/Feature/Auth/LogoutTest.php
-- [ ] T079 [US5] Write feature test for post-logout page access blocked in tests/Feature/Auth/LogoutTest.php
-- [ ] T080 [US5] Write feature test for browser back button blocked in tests/Feature/Auth/LogoutTest.php
-- [ ] T081 [US5] Write feature test for deactivated user auto-logout in tests/Feature/Auth/LogoutTest.php
-- [ ] T082 [US5] Write feature test for multi-session support in tests/Feature/Auth/MultiSessionTest.php
+- [X] T078 [US5] Write feature test for successful logout in tests/Feature/Auth/LogoutTest.php
+- [X] T079 [US5] Write feature test for post-logout page access blocked in tests/Feature/Auth/LogoutTest.php
+- [X] T080 [US5] Write feature test for browser back button blocked in tests/Feature/Auth/LogoutTest.php
+- [X] T081 [US5] Write feature test for deactivated user auto-logout in tests/Feature/Auth/LogoutTest.php
+- [X] T082 [US5] Write feature test for multi-session support in tests/Feature/Auth/MultiSessionTest.php
 
 ---
 
@@ -269,26 +269,26 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Token Cleanup
 
-- [ ] T083 Create CleanupExpiredTokensJob in app/Jobs/CleanupExpiredTokensJob.php
-- [ ] T084 Schedule daily token cleanup in routes/console.php
-- [ ] T085 Write test for token cleanup job in tests/Unit/Jobs/CleanupExpiredTokensJobTest.php
+- [X] T083 Create CleanupExpiredTokensJob in app/Jobs/CleanupExpiredTokensJob.php
+- [X] T084 Schedule daily token cleanup in routes/console.php
+- [X] T085 Write test for token cleanup job in tests/Unit/Jobs/CleanupExpiredTokensJobTest.php
 
 ### Factories
 
-- [ ] T086 [P] Create VerificationTokenFactory in database/factories/VerificationTokenFactory.php
-- [ ] T087 [P] Update UserFactory to support all statuses in database/factories/UserFactory.php
+- [X] T086 [P] Create VerificationTokenFactory in database/factories/VerificationTokenFactory.php
+- [X] T087 [P] Update UserFactory to support all statuses in database/factories/UserFactory.php
 
 ### Documentation
 
-- [ ] T088 [P] Add authentication setup to README.md
-- [ ] T089 [P] Document Slack API configuration in README.md
-- [ ] T090 [P] Document environment-specific behavior in README.md
+- [X] T088 [P] Add authentication setup to README.md
+- [X] T089 [P] Document Slack API configuration in README.md
+- [X] T090 [P] Document environment-specific behavior in README.md
 
 ### Code Quality
 
-- [ ] T091 Run Laravel Pint to format all PHP files
-- [ ] T092 Verify all tests pass with minimum 80% coverage
-- [ ] T093 Review and fix any remaining PHPStan/static analysis issues
+- [X] T091 Run Laravel Pint to format all PHP files
+- [X] T092 Verify all tests pass with minimum 80% coverage
+- [X] T093 Review and fix any remaining PHPStan/static analysis issues
 
 ---
 

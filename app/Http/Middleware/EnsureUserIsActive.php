@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Actions\Auth\InvalidateDeactivatedSessionAction;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,10 @@ class EnsureUserIsActive
 
             // Check if user is deactivated
             if ($user->status !== 1) {
+                // Invalidate all sessions for this user
+                $invalidator = new InvalidateDeactivatedSessionAction();
+                $invalidator->execute($user->id);
+
                 Auth::logout();
 
                 $request->session()->invalidate();
