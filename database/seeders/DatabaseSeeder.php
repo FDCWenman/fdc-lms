@@ -47,4 +47,3 @@ class DatabaseSeeder extends Seeder
         $employee->syncRoles(['employee']);
     }
 }
-
