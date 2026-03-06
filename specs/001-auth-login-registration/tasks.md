@@ -118,40 +118,40 @@ This feature follows an **incremental delivery approach** where each user story 
 
 ### Actions & Business Logic
 
-- [ ] T032 [US2] Create RegisterUserAction with Spatie role assignment in app/Actions/Auth/RegisterUserAction.php
-- [ ] T033 [US2] Write unit tests for RegisterUserAction in tests/Unit/Actions/Auth/RegisterUserActionTest.php
+- [X] T032 [US2] Create RegisterUserAction with Spatie role assignment in app/Actions/Auth/RegisterUserAction.php
+- [X] T033 [US2] Write unit tests for RegisterUserAction in tests/Unit/Actions/Auth/RegisterUserActionTest.php
 
 ### Form Requests
 
-- [ ] T034 [US2] Create RegisterUserRequest with validation rules in app/Http/Requests/Auth/RegisterUserRequest.php
+- [X] T034 [US2] Create RegisterUserRequest with validation rules in app/Http/Requests/Auth/RegisterUserRequest.php
 
 ### UI Components
 
-- [ ] T035 [US2] Create Register Livewire component in app/Livewire/Auth/Register.php
-- [ ] T036 [US2] Create registration Blade view with Flux UI form in resources/views/livewire/auth/register.blade.php
-- [ ] T037 [US2] Add real-time Slack ID validation to registration form in app/Livewire/Auth/Register.php
-- [ ] T038 [US2] Add loading indicators for Slack API calls in resources/views/livewire/auth/register.blade.php
+- [X] T035 [US2] Create Register Livewire component in app/Livewire/Auth/Register.php
+- [X] T036 [US2] Create registration Blade view with Flux UI form in resources/views/livewire/auth/register.blade.php
+- [X] T037 [US2] Add real-time Slack ID validation to registration form in app/Livewire/Auth/Register.php
+- [X] T038 [US2] Add loading indicators for Slack API calls in resources/views/livewire/auth/register.blade.php
 
 ### Slack Integration
 
-- [ ] T039 [P] [US2] Implement validateSlackId method in SlackService in app/Services/SlackService.php
-- [ ] T040 [P] [US2] Implement addToChannel method in SlackService in app/Services/SlackService.php
-- [ ] T041 [US2] Create SendSlackVerificationJob in app/Jobs/SendSlackVerificationJob.php
-- [ ] T042 [US2] Create AddUserToSlackChannelJob in app/Jobs/AddUserToSlackChannelJob.php
+- [X] T039 [P] [US2] Implement validateSlackId method in SlackService in app/Services/SlackService.php
+- [X] T040 [P] [US2] Implement addToChannel method in SlackService in app/Services/SlackService.php
+- [X] T041 [US2] Create SendSlackVerificationJob in app/Jobs/SendSlackVerificationJob.php
+- [X] T042 [US2] Create AddUserToSlackChannelJob in app/Jobs/AddUserToSlackChannelJob.php
 
 ### Routes
 
-- [ ] T043 [US2] Define registration routes with Spatie 'role:hr' middleware in routes/web.php
+- [X] T043 [US2] Define registration routes with Spatie 'role:hr' middleware in routes/web.php
 
 ### Tests
 
-- [ ] T044 [US2] Write feature test for successful registration in tests/Feature/Auth/RegistrationTest.php
-- [ ] T045 [US2] Write feature test for duplicate email rejection in tests/Feature/Auth/RegistrationTest.php
-- [ ] T046 [US2] Write feature test for duplicate Slack ID rejection in tests/Feature/Auth/RegistrationTest.php
-- [ ] T047 [US2] Write feature test for invalid Slack ID rejection in tests/Feature/Auth/RegistrationTest.php
-- [ ] T048 [US2] Write feature test for Slack API unavailable error in tests/Feature/Auth/RegistrationTest.php
-- [ ] T049 [US2] Write feature test for local environment bypass in tests/Feature/Auth/RegistrationTest.php
-- [ ] T050 [US2] Write feature test for non-HR user blocked from registration in tests/Feature/Auth/RegistrationTest.php
+- [X] T044 [US2] Write feature test for successful registration in tests/Feature/Auth/RegistrationTest.php
+- [X] T045 [US2] Write feature test for duplicate email rejection in tests/Feature/Auth/RegistrationTest.php
+- [X] T046 [US2] Write feature test for duplicate Slack ID rejection in tests/Feature/Auth/RegistrationTest.php
+- [X] T047 [US2] Write feature test for invalid Slack ID rejection in tests/Feature/Auth/RegistrationTest.php
+- [X] T048 [US2] Write feature test for Slack API unavailable error in tests/Feature/Auth/RegistrationTest.php
+- [X] T049 [US2] Write feature test for local environment bypass in tests/Feature/Auth/RegistrationTest.php
+- [X] T050 [US2] Write feature test for non-HR user blocked from registration in tests/Feature/Auth/RegistrationTest.php
 
 ---
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes (login)
@@ -26,6 +27,11 @@ Route::middleware(['auth', 'user.active'])->group(function () {
     // Approver portal (requires hr, team-lead, or project-manager role)
     Route::middleware(['role:hr|team-lead|project-manager'])->group(function () {
         Route::view('/portal', 'pages.portal')->name('portal');
+    });
+
+    // HR Admin routes (requires 'hr' role)
+    Route::middleware(['role:hr'])->group(function () {
+        Route::get('/register', Register::class)->name('register');
     });
 
     // Fallback dashboard
