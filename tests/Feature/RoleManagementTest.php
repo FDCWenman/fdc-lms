@@ -236,4 +236,52 @@ class RoleManagementTest extends TestCase
             'name' => 'Deletable Role',
         ]);
     }
+
+    /** @test */
+    public function can_view_users_assigned_to_role()
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Administrator');
+
+        $role = Role::create([
+            'name' => 'Test Role',
+            'guard_name' => 'web',
+            'is_protected' => false,
+        ]);
+
+        $user1 = User::factory()->create(['status' => 1, 'verified_at' => now()]);
+        $user2 = User::factory()->create(['status' => 1, 'verified_at' => now()]);
+        $user1->assignRole($role);
+        $user2->assignRole($role);
+
+        \Livewire\Livewire::actingAs($admin)
+            ->test(\App\Livewire\Roles\ManageRoles::class)
+            ->assertSee($role->name)
+            ->assertSee('2'); // User count
+    }
+
+    /** @test */
+    public function deletion_warning_if_role_has_users()
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Administrator');
+
+        $role = Role::create([
+            'name' => 'Role With Users',
+            'guard_name' => 'web',
+            'is_protected' => false,
+        ]);
+
+        $user = User::factory()->create(['status' => 1, 'verified_at' => now()]);
+        $user->assignRole($role);
+
+        \Livewire\Livewire::actingAs($admin)
+            ->test(\App\Livewire\Roles\ManageRoles::class)
+            ->call('deleteRole', $role->id)
+            ->assertHasErrors(['role']);
+
+        $this->assertDatabaseHas('roles', [
+            'name' => 'Role With Users',
+        ]);
+    }
 }
