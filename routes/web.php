@@ -37,7 +37,7 @@ Route::middleware(['auth', 'user.active'])->group(function () {
 
     // HR Admin routes (requires 'hr' role)
     Route::middleware(['role:hr'])->group(function () {
-        Route::get('/register', Register::class)->name('register');
+        Route::get('/auth/register', Register::class)->name('register');
     });
 
     // Fallback dashboard
