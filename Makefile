@@ -30,6 +30,12 @@ test-filter: ## Run specific test (usage: make test-filter FILTER=testName)
 test-auth: ## Run authentication tests only
 	docker exec $(CONTAINER) php artisan test tests/Feature/Auth/ tests/Unit/Actions/Auth/ tests/Unit/Services/ --compact
 
+test-dusk: ## Run Dusk E2E tests
+	docker exec $(CONTAINER) php artisan dusk
+
+test-dusk-auth: ## Run Dusk authentication E2E tests
+	docker exec $(CONTAINER) php artisan dusk tests/Browser/Auth/
+
 lint: ## Check code style with Pint
 	docker exec $(CONTAINER) vendor/bin/pint --test
 
