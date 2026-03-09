@@ -15,6 +15,12 @@ class ManageEmployees extends Component
 
     public ?int $statusFilter = null;
 
+    public bool $showStatusModal = false;
+
+    public ?int $selectedUserId = null;
+
+    public string $statusChangeReason = '';
+
     protected $queryString = [
         'search' => ['except' => ''],
         'statusFilter' => ['except' => null],
@@ -48,6 +54,66 @@ class ManageEmployees extends Component
             ->orderBy('last_name')
             ->orderBy('first_name')
             ->paginate(15);
+    }
+
+    public function openStatusModal(int $userId): void
+    {
+        // Prevent self-deactivation
+        if ($userId === auth()->id()) {
+            return;
+        }
+
+        $this->selectedUserId = $userId;
+        $this->statusChangeReason = '';
+        $this->showStatusModal = true;
+    }
+
+    public function confirmStatusChange(): void
+    {
+        $this->authorize('manage-employees');
+
+        if (! $this->selectedUserId) {
+            return;
+        }
+
+        $selectedUser = User::findOrFail($this->selectedUserId);
+        $oldStatus = $selectedUser->status;
+        $newStatus = $oldStatus === 1 ? 2 : 1;
+
+        logger('Updating status', [
+            'user' => $selectedUser->email,
+            'oldStatus' => $oldStatus,
+            'newStatus' => $newStatus,
+        ]);
+
+        $selectedUser->update(['status' => $newStatus]);
+
+        // Log the status change
+        activity()
+            ->performedOn($selectedUser)
+            ->causedBy(auth()->user())
+            ->withProperties([
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'reason' => $this->statusChangeReason ?: null,
+            ])
+            ->log('status_changed');
+
+        session()->flash('message', 'Employee status updated successfully.');
+
+        $this->showStatusModal = false;
+        $this->selectedUserId = null;
+        $this->statusChangeReason = '';
+
+        // Force refresh of employee list
+        $this->resetPage();
+
+        logger('Status change complete');
+    }
+
+    public function getSelectedUserProperty(): ?User
+    {
+        return $this->selectedUserId ? User::find($this->selectedUserId) : null;
     }
 
     public function render()

@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - March 9, 2026
+
+#### Employee Management & Sidebar Navigation
+- ✅ **Employee Directory** - View, search, and filter all employees with pagination (15 per page)
+- ✅ **Permission-Based Access** - `view-employees` permission controls employee list access
+- ✅ **Advanced Search** - Real-time search by name (first/middle/last) and email
+- ✅ **Status Filtering** - Filter employees by Pending Verification, Active, or Deactivated status
+- ✅ **Role Display** - View employee roles with Flux UI badges
+- ✅ **Status Management** - Activate/deactivate employees with optional reason field (requires `manage-employees` permission)
+- ✅ **Audit Trail** - All status changes logged to activity_log with user, timestamp, and reason
+- ✅ **Self-Protection** - Users cannot deactivate their own account
+- ✅ **Sidebar Navigation** - Replaced top navbar with collapsible sidebar with FDC branding
+- ✅ **Dynamic Menu** - Permission-based menu items (Employee Management, Administration sections)
+- ✅ **Active Page Highlighting** - Current page visually highlighted in sidebar
+- ✅ **N+1 Query Prevention** - Eager loading of roles relationship
+- ✅ **Performance Optimized** - Tested with 1000+ users, query time <12ms
+
+#### Technical Improvements
+- ✅ **Livewire 4 Components** - Full-page reactive component for employee management
+- ✅ **Flux UI Free** - Modal dialogs, form inputs, badges, avatars, and tables
+- ✅ **TDD Approach** - 22 new tests (8 feature + 2 unit tests) with 21/22 passing
+- ✅ **Spatie Activity Log** - Status change tracking with custom properties
+- ✅ **Authorization Gates** - Laravel policies for permission checking
+
 ### Added - March 6, 2026
 
 #### Authentication System

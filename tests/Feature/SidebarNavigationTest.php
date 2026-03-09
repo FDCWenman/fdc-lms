@@ -28,7 +28,7 @@ class SidebarNavigationTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('FDC LMS');
-        $response->assertSee('fdc-logo.png');
+        $response->assertSee('fdc.png');
     }
 
     /** @test */

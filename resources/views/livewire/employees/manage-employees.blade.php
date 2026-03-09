@@ -55,6 +55,11 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
                             Roles
                         </th>
+                        @can('manage-employees')
+                            <th class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                                Actions
+                            </th>
+                        @endcan
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-700">
@@ -104,6 +109,20 @@
                                     @endforelse
                                 </div>
                             </td>
+
+                            {{-- Actions --}}
+                            @can('manage-employees')
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <flux:button 
+                                        size="sm" 
+                                        variant="ghost" 
+                                        wire:click="openStatusModal({{ $employee->id }})"
+                                        wire:key="status-button-{{ $employee->id }}"
+                                    >
+                                        {{ $employee->status === 1 ? 'Deactivate' : 'Activate' }}
+                                    </flux:button>
+                                </td>
+                            @endcan
                         </tr>
                     @endforeach
                 </tbody>
@@ -134,4 +153,42 @@
             </div>
         </flux:card>
     @endif
+
+    {{-- Status Change Modal --}}
+    <flux:modal wire:model="showStatusModal" class="space-y-6">
+        <div>
+            <flux:heading size="lg">
+                {{ $this->selectedUser && $this->selectedUser->status === 1 ? 'Deactivate' : 'Activate' }} Employee
+            </flux:heading>
+            <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                @if($this->selectedUser)
+                    You are about to {{ $this->selectedUser->status === 1 ? 'deactivate' : 'activate' }} 
+                    <strong>{{ $this->selectedUser->first_name }} {{ $this->selectedUser->last_name }}</strong>.
+                @endif
+            </p>
+        </div>
+
+        <div>
+            <flux:label>Reason (Optional)</flux:label>
+            <flux:textarea 
+                wire:model="statusChangeReason" 
+                rows="3"
+                placeholder="Enter a reason for this status change..."
+            />
+        </div>
+
+        <div class="flex gap-2 justify-end">
+            <flux:button variant="ghost" wire:click="$set('showStatusModal', false)">
+                Cancel
+            </flux:button>
+            <flux:button 
+                variant="primary" 
+                wire:click="confirmStatusChange"
+                wire:loading.attr="disabled"
+            >
+                <span wire:loading.remove wire:target="confirmStatusChange">Confirm</span>
+                <span wire:loading wire:target="confirmStatusChange">Processing...</span>
+            </flux:button>
+        </div>
+    </flux:modal>
 </div>
