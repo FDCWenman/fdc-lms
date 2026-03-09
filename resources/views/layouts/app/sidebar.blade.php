@@ -42,11 +42,11 @@
                 </flux:sidebar.group>
 
                 @can('view-roles')
-                    <flux:sidebar.group expandable :heading="__('Administration')" icon="cog" class="grid">
-                        <flux:sidebar.item :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.*')" wire:navigate>
+                    <flux:sidebar.group expandable :heading="__('Administration')" icon="cog" class="grid" :expanded="request()->routeIs('admin.roles.*')">
+                        <flux:sidebar.item :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.index')" wire:navigate>
                             {{ __('Roles') }}
                         </flux:sidebar.item>
-                        <flux:sidebar.item :href="route('admin.roles.index')" wire:navigate>
+                        <flux:sidebar.item :href="route('admin.roles.permissions')" :current="request()->routeIs('admin.roles.permissions')" wire:navigate>
                             {{ __('Permissions') }}
                         </flux:sidebar.item>
                     </flux:sidebar.group>
@@ -54,16 +54,6 @@
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>
