@@ -4,7 +4,7 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+        <flux:sidebar side="left" sticky collapsible="mobile" class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
@@ -15,7 +15,42 @@
                     <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
+
+                    @can('view-employees')
+                        <flux:sidebar.item icon="users" :href="route('employees.index')" :current="request()->routeIs('employees.*')" wire:navigate>
+                            {{ __('Employee Management') }}
+                        </flux:sidebar.item>
+                    @endcan
+
+                    @role('employee')
+                        <flux:sidebar.item icon="calendar" :href="route('leaves')" :current="request()->routeIs('leaves*')" wire:navigate>
+                            {{ __('My Leaves') }}
+                        </flux:sidebar.item>
+                    @endrole
+                    
+                    @role('hr|team-lead|project-manager')
+                        <flux:sidebar.item icon="clipboard-check" :href="route('portal')" :current="request()->routeIs('portal*')" wire:navigate>
+                            {{ __('Approval Portal') }}
+                        </flux:sidebar.item>
+                    @endrole
+                    
+                    @role('hr')
+                        <flux:sidebar.item icon="user-plus" :href="route('register')" :current="request()->routeIs('register')" wire:navigate>
+                            {{ __('Register User') }}
+                        </flux:sidebar.item>
+                    @endrole
                 </flux:sidebar.group>
+
+                @can('view-roles')
+                    <flux:sidebar.group expandable :heading="__('Administration')" icon="cog" class="grid">
+                        <flux:sidebar.item :href="route('admin.roles.index')" :current="request()->routeIs('admin.roles.*')" wire:navigate>
+                            {{ __('Roles') }}
+                        </flux:sidebar.item>
+                        <flux:sidebar.item :href="route('admin.roles.index')" wire:navigate>
+                            {{ __('Permissions') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endcan
             </flux:sidebar.nav>
 
             <flux:spacer />
