@@ -80,6 +80,12 @@ class ManageEmployees extends Component
         $oldStatus = $selectedUser->status;
         $newStatus = $oldStatus === 1 ? 2 : 1;
 
+        logger('Updating status', [
+            'user' => $selectedUser->email,
+            'oldStatus' => $oldStatus,
+            'newStatus' => $newStatus,
+        ]);
+
         $selectedUser->update(['status' => $newStatus]);
 
         // Log the status change
@@ -98,6 +104,11 @@ class ManageEmployees extends Component
         $this->showStatusModal = false;
         $this->selectedUserId = null;
         $this->statusChangeReason = '';
+
+        // Force refresh of employee list
+        $this->resetPage();
+
+        logger('Status change complete');
     }
 
     public function getSelectedUserProperty(): ?User
