@@ -127,30 +127,30 @@
 
 ### Tests for User Story 2 (TDD - Write FIRST, ensure they FAIL)
 
-- [ ] T045 [P] [US2] Feature test: User with manage-employees can open status change modal in tests/Feature/EmployeeStatusTest.php
-- [ ] T046 [P] [US2] Feature test: Status changes when confirmed with reason in tests/Feature/EmployeeStatusTest.php
-- [ ] T047 [P] [US2] Feature test: Status changes when confirmed without reason in tests/Feature/EmployeeStatusTest.php
-- [ ] T048 [P] [US2] Feature test: Status unchanged when modal cancelled in tests/Feature/EmployeeStatusTest.php
-- [ ] T049 [P] [US2] Feature test: Cannot deactivate own account in tests/Feature/EmployeeStatusTest.php
-- [ ] T050 [P] [US2] Feature test: Activity log records status change with reason in tests/Feature/EmployeeStatusTest.php
-- [ ] T051 [P] [US2] Unit test: updateStatus method validates permissions in tests/Unit/Livewire/ManageEmployeesTest.php
-- [ ] T052 [P] [US2] Unit test: updateStatus method prevents self-deactivation in tests/Unit/Livewire/ManageEmployeesTest.php
+- [X] T045 [P] [US2] Feature test: User with manage-employees can open status change modal in tests/Feature/EmployeeStatusTest.php
+- [X] T046 [P] [US2] Feature test: Status changes when confirmed with reason in tests/Feature/EmployeeStatusTest.php
+- [X] T047 [P] [US2] Feature test: Status changes when confirmed without reason in tests/Feature/EmployeeStatusTest.php
+- [X] T048 [P] [US2] Feature test: Status unchanged when modal cancelled in tests/Feature/EmployeeStatusTest.php
+- [X] T049 [P] [US2] Feature test: Cannot deactivate own account in tests/Feature/EmployeeStatusTest.php
+- [X] T050 [P] [US2] Feature test: Activity log records status change with reason in tests/Feature/EmployeeStatusTest.php
+- [X] T051 [P] [US2] Unit test: updateStatus method validates permissions in tests/Unit/Livewire/ManageEmployeesTest.php
+- [X] T052 [P] [US2] Unit test: updateStatus method prevents self-deactivation in tests/Unit/Livewire/ManageEmployeesTest.php
 
 **Run tests - Expected: 8 failures** → `php artisan test --filter=EmployeeStatus`
 
 ### Implementation for User Story 2
 
-- [ ] T053 [US2] Add properties: $showStatusModal, $selectedUser, $statusChangeReason in app/Livewire/Employees/ManageEmployees.php
-- [ ] T054 [US2] Add openStatusModal(User $user) method with self-protection check in app/Livewire/Employees/ManageEmployees.php
-- [ ] T055 [US2] Add confirmStatusChange() method with authorization check in app/Livewire/Employees/ManageEmployees.php
-- [ ] T056 [US2] Implement status toggle logic (1↔2) in confirmStatusChange() in app/Livewire/Employees/ManageEmployees.php
-- [ ] T057 [US2] Add Activity Log integration in confirmStatusChange() with properties: old_status, new_status, reason in app/Livewire/Employees/ManageEmployees.php
-- [ ] T058 [US2] Add success message after status change in app/Livewire/Employees/ManageEmployees.php
-- [ ] T059 [US2] Add status toggle button column with @can('manage-employees') in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T060 [US2] Create Flux modal (wire:model="showStatusModal") in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T061 [US2] Add Flux textarea for optional reason field in status modal in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T062 [US2] Add modal confirm and cancel buttons in resources/views/livewire/employees/manage-employees.blade.php
-- [ ] T063 [US2] Add wire:loading state to confirm button in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T053 [US2] Add properties: $showStatusModal, $selectedUser, $statusChangeReason in app/Livewire/Employees/ManageEmployees.php
+- [X] T054 [US2] Add openStatusModal(User $user) method with self-protection check in app/Livewire/Employees/ManageEmployees.php
+- [X] T055 [US2] Add confirmStatusChange() method with authorization check in app/Livewire/Employees/ManageEmployees.php
+- [X] T056 [US2] Implement status toggle logic (1↔2) in confirmStatusChange() in app/Livewire/Employees/ManageEmployees.php
+- [X] T057 [US2] Add Activity Log integration in confirmStatusChange() with properties: old_status, new_status, reason in app/Livewire/Employees/ManageEmployees.php
+- [X] T058 [US2] Add success message after status change in app/Livewire/Employees/ManageEmployees.php
+- [X] T059 [US2] Add status toggle button column with @can('manage-employees') in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T060 [US2] Create Flux modal (wire:model="showStatusModal") in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T061 [US2] Add Flux textarea for optional reason field in status modal in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T062 [US2] Add modal confirm and cancel buttons in resources/views/livewire/employees/manage-employees.blade.php
+- [X] T063 [US2] Add wire:loading state to confirm button in resources/views/livewire/employees/manage-employees.blade.php
 
 **Run tests - Expected: 8 passes** → `php artisan test --filter=EmployeeStatus`
 
