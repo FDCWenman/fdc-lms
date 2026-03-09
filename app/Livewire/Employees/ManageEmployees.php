@@ -17,7 +17,7 @@ class ManageEmployees extends Component
 
     public bool $showStatusModal = false;
 
-    public ?User $selectedUser = null;
+    public ?int $selectedUserId = null;
 
     public string $statusChangeReason = '';
 
@@ -63,7 +63,7 @@ class ManageEmployees extends Component
             return;
         }
 
-        $this->selectedUser = User::findOrFail($userId);
+        $this->selectedUserId = $userId;
         $this->statusChangeReason = '';
         $this->showStatusModal = true;
     }
@@ -72,18 +72,19 @@ class ManageEmployees extends Component
     {
         $this->authorize('manage-employees');
 
-        if (! $this->selectedUser) {
+        if (! $this->selectedUserId) {
             return;
         }
 
-        $oldStatus = $this->selectedUser->status;
+        $selectedUser = User::findOrFail($this->selectedUserId);
+        $oldStatus = $selectedUser->status;
         $newStatus = $oldStatus === 1 ? 2 : 1;
 
-        $this->selectedUser->update(['status' => $newStatus]);
+        $selectedUser->update(['status' => $newStatus]);
 
         // Log the status change
         activity()
-            ->performedOn($this->selectedUser)
+            ->performedOn($selectedUser)
             ->causedBy(auth()->user())
             ->withProperties([
                 'old_status' => $oldStatus,
@@ -95,8 +96,13 @@ class ManageEmployees extends Component
         session()->flash('message', 'Employee status updated successfully.');
 
         $this->showStatusModal = false;
-        $this->selectedUser = null;
+        $this->selectedUserId = null;
         $this->statusChangeReason = '';
+    }
+
+    public function getSelectedUserProperty(): ?User
+    {
+        return $this->selectedUserId ? User::find($this->selectedUserId) : null;
     }
 
     public function render()

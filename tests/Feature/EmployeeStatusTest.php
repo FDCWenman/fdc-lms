@@ -46,7 +46,7 @@ class EmployeeStatusTest extends TestCase
             ->test(\App\Livewire\Employees\ManageEmployees::class)
             ->call('openStatusModal', $employee->id)
             ->assertSet('showStatusModal', true)
-            ->assertSet('selectedUser.id', $employee->id);
+            ->assertSet('selectedUserId', $employee->id);
     }
 
     /** @test */

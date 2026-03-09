@@ -55,6 +55,6 @@ class ManageEmployeesTest extends TestCase
             ->test(ManageEmployees::class)
             ->call('openStatusModal', $hr->id)
             ->assertSet('showStatusModal', false)
-            ->assertSet('selectedUser', null);
+            ->assertSet('selectedUserId', null);
     }
 }
