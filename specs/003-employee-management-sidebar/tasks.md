@@ -91,25 +91,25 @@
 
 ### Tests for User Story 3 (TDD - Write FIRST, ensure they FAIL)
 
-- [ ] T031 [P] [US3] Browser test: Sidebar displays with FDC logo and branding in tests/Feature/SidebarNavigationTest.php
-- [ ] T032 [P] [US3] Browser test: Dashboard link appears as first menu item in tests/Feature/SidebarNavigationTest.php
-- [ ] T033 [P] [US3] Browser test: Employee Management link visible with view-employees permission in tests/Feature/SidebarNavigationTest.php
-- [ ] T034 [P] [US3] Browser test: Administration section visible with role management permissions in tests/Feature/SidebarNavigationTest.php
-- [ ] T035 [P] [US3] Browser test: Current page highlighted in sidebar navigation in tests/Feature/SidebarNavigationTest.php
+- [X] T031 [P] [US3] Browser test: Sidebar displays with FDC logo and branding in tests/Feature/SidebarNavigationTest.php
+- [X] T032 [P] [US3] Browser test: Dashboard link appears as first menu item in tests/Feature/SidebarNavigationTest.php
+- [X] T033 [P] [US3] Browser test: Employee Management link visible with view-employees permission in tests/Feature/SidebarNavigationTest.php
+- [X] T034 [P] [US3] Browser test: Administration section visible with role management permissions in tests/Feature/SidebarNavigationTest.php
+- [X] T035 [P] [US3] Browser test: Current page highlighted in sidebar navigation in tests/Feature/SidebarNavigationTest.php
 
 **Run tests - Expected: 5 failures** → `php artisan test --filter=SidebarNavigationTest`
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Replace navbar with Flux sidebar in resources/views/layouts/app.blade.php
-- [ ] T037 [US3] Add Flux brand component with FDC logo and "FDC LMS" text in resources/views/layouts/app.blade.php
-- [ ] T038 [US3] Add Flux navlist with Dashboard link (icon: home) in resources/views/layouts/app.blade.php
-- [ ] T039 [US3] Add Employee Management link with @can('view-employees') directive in resources/views/layouts/app.blade.php
-- [ ] T040 [US3] Create Administration navlist group (expandable) with @can directives in resources/views/layouts/app.blade.php
-- [ ] T041 [US3] Add Roles link under Administration with @can('view-roles') in resources/views/layouts/app.blade.php
-- [ ] T042 [US3] Add Permissions link under Administration with @can('view-roles') in resources/views/layouts/app.blade.php
-- [ ] T043 [US3] Add Flux navlist.user component at bottom with logout option in resources/views/layouts/app.blade.php
-- [ ] T044 [US3] Verify active page highlighting works (Flux handles this automatically) in resources/views/layouts/app.blade.php
+- [X] T036 [US3] Replace navbar with Flux sidebar in resources/views/layouts/app/sidebar.blade.php
+- [X] T037 [US3] Add Flux brand component with FDC logo and "FDC LMS" text in resources/views/components/app-logo.blade.php
+- [X] T038 [US3] Add Flux sidebar.nav with Dashboard link (icon: home) in resources/views/layouts/app/sidebar.blade.php
+- [X] T039 [US3] Add Employee Management link with @can('view-employees') directive in resources/views/layouts/app/sidebar.blade.php
+- [X] T040 [US3] Create Administration sidebar.group (expandable) with @can directives in resources/views/layouts/app/sidebar.blade.php
+- [X] T041 [US3] Add Roles link under Administration with @can('view-roles') in resources/views/layouts/app/sidebar.blade.php
+- [X] T042 [US3] Add Permissions link under Administration with @can('view-roles') in resources/views/layouts/app/sidebar.blade.php
+- [X] T043 [US3] Add desktop-user-menu component at bottom with logout option in resources/views/layouts/app/sidebar.blade.php
+- [X] T044 [US3] Verify active page highlighting works (Flux handles this automatically with :current attribute) in resources/views/layouts/app/sidebar.blade.php
 
 **Run tests - Expected: 5 passes** → `php artisan test --filter=SidebarNavigationTest`
 
